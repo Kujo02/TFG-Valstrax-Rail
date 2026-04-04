@@ -1,0 +1,51 @@
+# 🔐 Variables de entorno (MUY IMPORTANTE)
+
+.env
+
+# 🐍 Entorno virtual
+
+env/
+venv/
+ENV/
+
+# 🧠 Python cache
+
+**pycache**/
+*.pyc
+*.pyo
+*.pyd
+
+# 📦 Instaladores / builds
+
+*.egg-info/
+dist/
+build/
+
+# 🧪 Archivos temporales
+
+*.log
+*.tmp
+*.swp
+
+# 🧰 IDEs
+
+.vscode/
+.idea/
+
+# 🖥️ Sistema operativo
+
+.DS_Store
+Thumbs.db
+
+# 🔥 Flask
+
+instance/
+.webassets-cache
+
+# 📂 SQLite (por si usas en tests)
+
+*.db
+
+# 🚫 Archivos sensibles
+
+config_secret.py
