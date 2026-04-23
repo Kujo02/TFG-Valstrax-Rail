@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Mi App{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="flex flex-col min-h-screen">
+
+    {% block header %}
+    <nav class="bg-gray-800 text-white">
+    <div class="flex items-center justify-between p-4">
+
+        <!-- Logo + nombre -->
+        <div class="flex items-center space-x-2 ml-10">
+            <img class="h-14 w-auto" src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo">
+            <h1 class="text-3xl font-bold">Valstrax Rail</h1>
+        </div>
+
+        <!-- Menú -->
+        <ul class="flex space-x-6 mr-5">
+            <li><a href="{{ url_for('main.home') }}">Inicio</a></li>
+            <li><a href="#">Reservar</a></li>
+            <li><a href="#">Login</a></li>
+            <li><a href="#">Register</a></li>
+            <li><a href="#">Mis pedidos</a></li>
+        </ul>
+
+    </div>
+    </nav>
+    {% endblock %}
+
+    <div class="flex-1">
+    {% block content %} 
+    
+
+    {% endblock %}
+    </div>
+
+    <footer class="bg-gray-800 text-white mt-10 ">
+    <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center">
+        
+        <!-- Links -->
+        <ul class="flex space-x-6 text-sm">
+            <li><a href="#" class="hover:underline">Privacidad</a></li>
+            <li><a href="#" class="hover:underline">Términos</a></li>
+            <li><a href="#" class="hover:underline">Soporte</a></li>
+            <li><a href="#" class="hover:underline">Contacto</a></li>
+        </ul>
+
+        <!-- Copy -->
+        <p class="text-sm mt-4 md:mt-0">
+            © 2026 Valstrax Rail. Todos los derechos reservados.
+        </p>
+
+    </div>
+</footer>
+
+</body>
+</html>
