@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 import os
 from config import config
 
-
+from DB.db import mysql
 from routes.main import main
 
 
@@ -10,6 +10,8 @@ from routes.main import main
 app = Flask(__name__)
 
 app.config.from_object(config['development'])
+
+mysql.init_app(app)
 
 app.register_blueprint(main)
 
