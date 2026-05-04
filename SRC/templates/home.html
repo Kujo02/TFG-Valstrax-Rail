@@ -1,11 +1,16 @@
 {% extends 'layout.html' %}
 
-{% block title %}Inicio{% endblock %}
+{% block title %}Home{% endblock %}
 
 
 {% block content %}
 <div>
     <h1>HOME</h1>
 </div>
+
+{% if current_user.is_authenticated %}
+    <li>Hola, {{ current_user.name }}</li>
+    <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+{% endif %}
 
 {% endblock %}

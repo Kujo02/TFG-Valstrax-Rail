@@ -8,4 +8,5 @@ def index():
 
 @main.route('/home')
 def home():
+    
     return render_template('home.html')

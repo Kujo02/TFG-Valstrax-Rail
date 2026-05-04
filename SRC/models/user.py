@@ -1,12 +1,14 @@
 from DB.db import mysql
+from flask_login import UserMixin
 
-class User:
+class User(UserMixin):
     
-    def __init__(self, id=None, name=None, email=None, password=None):
+    def __init__(self, id=None, name=None, email=None, password=None, role=None):
         self.id = id
         self.name = name
         self.email = email
         self.password = password
+        self.role = role
         
     @classmethod
     def get_by_email(cls, email):
@@ -24,7 +26,7 @@ class User:
         if row:
             return cls(
                 id=row[0],
-                username=row[1],
+                name=row[1],
                 email=row[2],
                 password=row[3],
                 role=row[4]
@@ -42,3 +44,14 @@ class User:
 
         mysql.connection.commit()
         cursor.close()
+    
+    @classmethod
+    def get_by_id(cls, user_id):
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT id, name, email, password FROM users WHERE id=%s", (user_id,))
+        row = cursor.fetchone()
+        cursor.close()
+
+        if row:
+            return cls(row[0], row[1], row[2], row[3])
+        return None
