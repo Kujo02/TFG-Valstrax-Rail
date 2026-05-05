@@ -3,19 +3,21 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<section>
-    <h2>Login</h2>
-    <form method="POST" action="{{ url_for('auth.login') }}">
+<section style="background-image: url('{{ url_for("static", filename="img/fondo.png") }}');" 
+class="bg-cover bg-center flex items-center justify-center min-h-screen font-[Nunito]" >
+    <div class="bg-gray-200 bg-opacity-50 p-8 rounded-lg shadow-lg w-full max-w-md items-center flex justify-center gap-4 flex-col">
+    <h2 class="text-3xl font-bold text-blue-800 ">LOGIN</h2>
+    <form class="flex flex-col items-center gap-4 w-full" method="POST" action="{{ url_for('auth.login') }}">
         {{ form.hidden_tag() }}
-        <div>
-            {{ form.email.label }}
-            {{ form.email }}
+        <div class="w-4/6 flex flex-col">
+            {{ form.email.label(class="block text-blue-700 text-sm font-bold mb-2") }}
+            {{ form.email(class="bg-gray-100 border border-gray-300 rounded py-1 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500") }}
         </div>
-        <div>
-            {{ form.password.label }}
-            {{ form.password }}
+        <div class="w-4/6 flex flex-col">
+            {{ form.password.label(class="block text-blue-700 text-sm font-bold mb-2") }}
+            {{ form.password(class="bg-gray-100 border border-gray-300 rounded py-1 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500") }}
         </div>
-        {{ form.submit }}
+        {{ form.submit(class="bg-blue-500 hover:bg-blue-700 text-white font-bold w-24 py-3 px-3 rounded-lg") }}
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
             {% for category, message in messages %}
@@ -26,5 +28,6 @@
             {% endif %}
         {% endwith %}
     </form>
+    </div>
 </section>
 {% endblock %}

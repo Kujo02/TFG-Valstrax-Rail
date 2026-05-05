@@ -22,13 +22,13 @@ def register():
 
         #Comrpobar si el email ya existe.
         if User.get_by_email(form.email.data):
-            flash('Email already registered', 'danger')
+            flash('El email ya está registrado', 'danger')
             return redirect(url_for('auth.register'))
 
         password_hash = generate_password_hash(password)
 
         User.create(name, email, password_hash)
-
+        flash('Registro exitoso. Ahora puedes iniciar sesión.', 'success')
         return redirect(url_for('auth.login'))
     
     
@@ -59,8 +59,8 @@ def login():
             login_user(user)
             return redirect(url_for('main.home'))
         else:
-            flash('Invalid email or password', 'danger')
-            return render_template('login.html', form=form, error='Invalid email or password')
+            flash('Email o contraseña inválidos', 'danger')
+            return render_template('login.html', form=form)
 
     return render_template('login.html', form=form)
 
@@ -69,5 +69,5 @@ def login():
 @login_required
 def logout():
     logout_user()
-    
+    flash('Has cerrado sesión exitosamente.', 'success')
     return redirect(url_for('main.home'))
