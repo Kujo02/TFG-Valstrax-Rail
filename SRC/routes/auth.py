@@ -54,9 +54,16 @@ def login():
         password = form.password.data
 
         user = User.get_by_email(email)
-
+        
         if user and check_password_hash(user.password, password):
             login_user(user)
+            flash('Has iniciado sesión correctamente.', 'success')
+
+            if user.role == "admin":
+                return redirect(url_for('admin.dashboard'))
+
+
+            
             return redirect(url_for('main.home'))
         else:
             flash('Email o contraseña inválidos', 'danger')

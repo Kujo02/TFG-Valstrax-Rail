@@ -48,10 +48,15 @@ class User(UserMixin):
     @classmethod
     def get_by_id(cls, user_id):
         cursor = mysql.connection.cursor()
-        cursor.execute("SELECT id, name, email, password FROM users WHERE id=%s", (user_id,))
+        cursor.execute("""
+        SELECT u.id, u.name, u.email, u.password, r.name
+        FROM users u
+        JOIN roles r ON u.role_id = r.id
+        WHERE u.id = %s
+    """, (user_id,))
         row = cursor.fetchone()
         cursor.close()
 
         if row:
-            return cls(row[0], row[1], row[2], row[3])
+            return cls(row[0], row[1], row[2], row[3], row[4])
         return None
