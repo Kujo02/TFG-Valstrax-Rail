@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 from functools import wraps
-
+from models.user import User
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -25,3 +25,12 @@ def admin_required(f):
 @admin_required
 def dashboard():
     return render_template('admin/dashboard.html')
+
+
+@admin.route('/users')
+@login_required
+@admin_required
+def users():
+    users = User.get_all()
+
+    return render_template('admin/users.html ', users=users)

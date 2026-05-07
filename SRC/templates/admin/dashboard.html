@@ -1,8 +1,90 @@
 {% extends 'layout.html' %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Panel de Administrador{% endblock %}
 
 {% block content %}
-    <h1>Dashboard</h1>
-    <p>Bienvenido, {{ current_user.name }} AL PANEL DE ADMINISTRADOR!</p>
+
+<section class="bg-black flex-1 flex items-center justify-center px-6 py-6">
+
+    <div class="w-full max-w-5xl bg-black border-4 border-orange-500 rounded-xl overflow-hidden shadow-2xl">
+
+        <!-- Cabecera -->
+        <div class="bg-black border-b border-orange-500 px-8 py-4 flex items-center gap-4">
+            <div class="text-orange-400 text-3xl">
+                ⚙️
+            </div>
+
+            <div>
+                <h1 class="text-orange-500 text-2xl font-extrabold uppercase">
+                    Panel de Administrador
+                </h1>
+                <p class="text-gray-200 text-sm font-semibold">
+                    Gestión completa del sistema ferroviario.
+                </p>
+            </div>
+        </div>
+
+        <!-- Grid de tarjetas -->
+        <div class="grid grid-cols-1 md:grid-cols-3">
+
+            <!-- Usuarios -->
+            <a href="{{ url_for('admin.users') }}"
+               class="h-40 border-r border-b border-orange-700 flex items-center justify-center hover:bg-yellow-900 transition">
+                <div class="bg-orange-500 hover:bg-orange-600 rounded-xl w-36 h-24 flex flex-col items-center justify-center shadow-lg transition">
+                    <div class="text-white text-2xl mb-1">👤</div>
+                    <h2 class="text-white font-extrabold text-base uppercase">Usuarios</h2>
+                </div>
+            </a>
+
+            <!-- Trenes -->
+            <a href="#"
+               class="h-40 border-r border-b border-orange-700 flex items-center justify-center hover:bg-yellow-900 transition">
+                <div class="bg-orange-500 hover:bg-orange-600 rounded-xl w-36 h-24 flex flex-col items-center justify-center shadow-lg transition">
+                    <div class="text-white text-2xl mb-1">🚆</div>
+                    <h2 class="text-white font-extrabold text-base uppercase">Trenes</h2>
+                </div>
+            </a>
+
+            <!-- Vagones -->
+            <a href="#"
+               class="h-40 border-b border-orange-700 flex items-center justify-center hover:bg-yellow-900 transition">
+                <div class="bg-orange-500 hover:bg-orange-600 rounded-xl w-36 h-24 flex flex-col items-center justify-center shadow-lg transition">
+                    <div class="text-white text-2xl mb-1">📦</div>
+                    <h2 class="text-white font-extrabold text-base uppercase">Vagones</h2>
+                </div>
+            </a>
+
+            <!-- Viajes -->
+            <a href="#"
+               class="h-40 border-r border-orange-700 flex items-center justify-center hover:bg-yellow-900 transition">
+                <div class="bg-orange-500 hover:bg-orange-600 rounded-xl w-36 h-24 flex flex-col items-center justify-center shadow-lg transition">
+                    <div class="text-white text-2xl mb-1">🛤️</div>
+                    <h2 class="text-white font-extrabold text-base uppercase">Viajes</h2>
+                </div>
+            </a>
+
+            <!-- Pedidos -->
+            <a href="#"
+               class="h-40 border-r border-orange-700 flex items-center justify-center hover:bg-yellow-900 transition">
+                <div class="bg-orange-500 hover:bg-orange-600 rounded-xl w-36 h-24 flex flex-col items-center justify-center shadow-lg transition">
+                    <div class="text-white text-2xl mb-1">📋</div>
+                    <h2 class="text-white font-extrabold text-base uppercase">Pedidos</h2>
+                </div>
+            </a>
+
+            <!-- Asignaciones -->
+            <a href="#"
+               class="h-40 flex items-center justify-center hover:bg-yellow-900 transition">
+                <div class="bg-orange-500 hover:bg-orange-600 rounded-xl w-36 h-24 flex flex-col items-center justify-center shadow-lg transition">
+                    <div class="text-white text-2xl mb-1">🧩</div>
+                    <h2 class="text-white font-extrabold text-sm uppercase">Asignaciones</h2>
+                </div>
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
 {% endblock %}

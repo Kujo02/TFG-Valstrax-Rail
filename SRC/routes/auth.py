@@ -54,6 +54,10 @@ def login():
         password = form.password.data
 
         user = User.get_by_email(email)
+
+        if user and user.estado == "deshabilitado":
+            flash('Tu cuenta está deshabilitada. Contacta con un administrador.', 'danger')
+            return render_template('login.html', form=form)
         
         if user and check_password_hash(user.password, password):
             login_user(user)
