@@ -27,8 +27,8 @@
             <li><a href="#" class="hover:text-blue-300 transition">Reservar</a ></li>
             {% if current_user.is_authenticated %}
 
-            
-            <li><a href="#">Mis pedidos</a></li>
+            <li><a href="{{ url_for('main.profile') }}" class="hover:text-blue-300 transition">Mi perfil</a></li>
+            <li><a href="#" class="hover:text-blue-300 transition">Mis pedidos</a></li>
             <li><a href="{{ url_for('auth.logout') }}"class="hover:text-blue-300 transition">Cerrar sesión</a></li>
 
             {% else %}
