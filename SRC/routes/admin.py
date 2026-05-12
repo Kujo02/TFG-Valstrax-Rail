@@ -3,7 +3,9 @@ from flask_login import login_required, current_user
 from functools import wraps
 from models.user import User
 from models.tren import Tren
-from forms import TrenForm
+from models.vagon import Vagon
+from forms import TrenForm, VagonForm
+
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -159,3 +161,117 @@ def edit_tren(tren_id):
         return redirect(url_for('admin.trenes'))
 
     return render_template('admin/tren_edit.html', form=form, tren=tren, title='Editar tren')
+
+
+
+
+
+
+
+@admin.route('/vagones')
+@login_required
+@admin_required
+def vagones():
+    vagones = Vagon.get_all()
+    return render_template('admin/vagones.html', vagones=vagones)
+
+
+
+
+@admin.route('/trenes/<int:tren_id>/vagones')
+@login_required
+@admin_required
+def vagones_tren(tren_id):
+    tren = Tren.get_by_id(tren_id)
+
+    if not tren:
+        flash('El tren no existe.', 'danger')
+        return redirect(url_for('admin.trenes'))
+
+    vagones = Vagon.get_by_tren_id(tren_id)
+
+    return render_template('admin/vagones_tren.html', tren=tren, vagones=vagones)
+
+
+
+
+@admin.route('/trenes/<int:tren_id>/vagones/create', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def create_vagon(tren_id):
+    tren = Tren.get_by_id(tren_id)
+
+    if not tren:
+        flash('El tren no existe.', 'danger')
+        return redirect(url_for('admin.trenes'))
+
+    form = VagonForm()
+
+    if form.validate_on_submit():
+        nombre = form.nombre.data
+        filas = form.filas.data
+        columnas = form.columnas.data
+        estado_vagon = form.estado_vagon.data
+
+        vagon_existe = Vagon.get_by_nombre_and_tren(nombre, tren_id)
+
+        if vagon_existe:
+            flash('Ya existe un vagón con ese nombre en este tren.', 'danger')
+            return render_template('admin/vagon_insert.html', form=form, tren=tren, title='Nuevo vagón')
+
+        Vagon.create(tren_id, nombre, filas, columnas, estado_vagon)
+
+        flash('Vagón creado correctamente.', 'success')
+        return redirect(url_for('admin.vagones_tren', tren_id=tren_id))
+
+    return render_template('admin/vagon_insert.html', form=form, tren=tren, title='Nuevo vagón')
+
+
+@admin.route('/vagones/<int:vagon_id>/edit', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_vagon(vagon_id):
+    vagon = Vagon.get_by_id(vagon_id)
+
+    if not vagon:
+        flash('El vagón no existe.', 'danger')
+        return redirect(url_for('admin.vagones'))
+
+    tren = Tren.get_by_id(vagon.tren_id)
+
+    form = VagonForm(obj=vagon)
+
+    if form.validate_on_submit():
+        nombre = form.nombre.data
+        filas = form.filas.data
+        columnas = form.columnas.data
+        estado_vagon = form.estado_vagon.data
+
+        vagon_existe = Vagon.get_by_nombre_and_tren(nombre, vagon.tren_id)
+
+        if vagon_existe and vagon_existe.id != vagon.id:
+            flash('Ya existe otro vagón con ese nombre en este tren.', 'danger')
+            return render_template('admin/vagon_edit.html', form=form, vagon=vagon, tren=tren, title='Editar vagón')
+
+        Vagon.update(vagon_id, nombre, filas, columnas, estado_vagon)
+
+        flash('Vagón actualizado correctamente.', 'success')
+        return redirect(url_for('admin.vagones_tren', tren_id=vagon.tren_id))
+
+    return render_template('admin/vagon_edit.html', form=form, vagon=vagon, tren=tren, title='Editar vagón')
+
+
+@admin.route('/vagones/<int:vagon_id>/toggle_estado', methods=['POST'])
+@login_required
+@admin_required
+def toggle_vagon_estado(vagon_id):
+    vagon = Vagon.get_by_id(vagon_id)
+
+    if not vagon:
+        flash('El vagón no existe.', 'danger')
+        return redirect(url_for('admin.vagones'))
+
+    Vagon.toggle_estado(vagon_id)
+
+    flash('Estado del vagón actualizado correctamente.', 'success')
+    return redirect(url_for('admin.vagones_tren', tren_id=vagon.tren_id))

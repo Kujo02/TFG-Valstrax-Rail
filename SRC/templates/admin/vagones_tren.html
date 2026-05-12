@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 
-{% block title %}Trenes{% endblock %}
+{% block title %}Vagones del tren{% endblock %}
 
 {% block content %}
 
@@ -12,23 +12,58 @@
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h1 class="text-3xl font-extrabold text-orange-500 uppercase">
-                    Trenes
+                    Vagones del tren
                 </h1>
                 <p class="text-gray-300 text-sm mt-1">
-                    Listado de trenes registrados en Valstrax Rail.
+                    {{ tren.nombre }} — {{ tren.codigo }}
                 </p>
             </div>
 
             <div class="flex gap-3">
-                <a href="{{ url_for('admin.dashboard') }}"
+                <a href="{{ url_for('admin.trenes') }}"
                    class="bg-gray-700 hover:bg-gray-800 text-white font-bold px-4 py-2 rounded-lg transition">
-                    Volver al panel
+                    Volver a trenes
                 </a>
 
-                <a href="{{ url_for('admin.create_tren') }}"
+                <a href="{{ url_for('admin.create_vagon', tren_id=tren.id) }}"
                    class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 py-2 rounded-lg transition">
-                    Nuevo tren
+                    Nuevo vagón
                 </a>
+            </div>
+        </div>
+
+        <!-- Resumen del tren -->
+        <div class="bg-black border-4 border-orange-500 rounded-xl shadow-2xl p-5 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                    <p class="text-gray-400">Tren</p>
+                    <p class="text-white font-bold">{{ tren.nombre }}</p>
+                </div>
+
+                <div>
+                    <p class="text-gray-400">Código</p>
+                    <p class="text-white font-bold">{{ tren.codigo }}</p>
+                </div>
+
+                <div>
+                    <p class="text-gray-400">Estado</p>
+                    {% if tren.estado_tren == "activo" %}
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                            <span class="text-green-400 font-semibold">Activo</span>
+                        </div>
+                    {% else %}
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+                            <span class="text-red-400 font-semibold">Inactivo</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <p class="text-gray-400">Vagones</p>
+                    <p class="text-white font-bold">{{ vagones|length }}</p>
+                </div>
             </div>
         </div>
 
@@ -40,33 +75,40 @@
                     <tr>
                         <th class="px-6 py-4">ID</th>
                         <th class="px-6 py-4">Nombre</th>
-                        <th class="px-6 py-4">Código</th>
+                        <th class="px-6 py-4">Filas</th>
+                        <th class="px-6 py-4">Columnas</th>
+                        <th class="px-6 py-4">Capacidad</th>
                         <th class="px-6 py-4">Estado</th>
-                        <th class="px-6 py-4">Creado</th>
-                        <th class="px-6 py-4">Actualizado</th>
-                        <th class="px-6 py-4 text-center">Vagones</th>
                         <th class="px-6 py-4 text-center">Act/Des</th>
                         <th class="px-6 py-4 text-center">Editar</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    {% for tren in trenes %}
+                    {% for vagon in vagones %}
                         <tr class="border-b border-orange-800 hover:bg-gray-900 transition">
                             <td class="px-6 py-4">
-                                {{ tren.id }}
+                                {{ vagon.id }}
                             </td>
 
                             <td class="px-6 py-4 font-semibold">
-                                {{ tren.nombre }}
-                            </td>
-
-                            <td class="px-6 py-4 text-gray-300">
-                                {{ tren.codigo }}
+                                {{ vagon.nombre }}
                             </td>
 
                             <td class="px-6 py-4">
-                                {% if tren.estado_tren == "activo" %}
+                                {{ vagon.filas }}
+                            </td>
+
+                            <td class="px-6 py-4">
+                                {{ vagon.columnas }}
+                            </td>
+
+                            <td class="px-6 py-4">
+                                {{ vagon.capacidad_m2 }} m²
+                            </td>
+
+                            <td class="px-6 py-4">
+                                {% if vagon.estado_vagon == "activo" %}
                                     <div class="flex items-center gap-2">
                                         <span class="w-3 h-3 bg-green-500 rounded-full"></span>
                                         <span class="text-green-400 font-semibold">Activo</span>
@@ -79,32 +121,19 @@
                                 {% endif %}
                             </td>
 
-                            <td class="px-6 py-4 text-gray-300">
-                                {{ tren.created_at.strftime('%d-%m-%Y') }}
-                            </td>
-
-                            <td class="px-6 py-4 text-gray-300">
-                                {{ tren.updated_at.strftime('%d/%m/%Y %H:%M:%S') }}
-                            </td>
-                            <td class="px-6 py-4 text-center whitespace-nowrap">
-                                <a href="{{ url_for('admin.vagones_tren', tren_id=tren.id) }}"
-                                class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-semibold transition">
-                                    Ver vagones
-                                </a>
-                            </td>
                             <td class="px-6 py-4 text-center">
-                                <form method="POST" action="{{ url_for('admin.toggle_tren_estado', tren_id=tren.id) }}">
+                                <form method="POST" action="{{ url_for('admin.toggle_vagon_estado', vagon_id=vagon.id) }}">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                                     <button type="submit"
-                                        class="{% if tren.estado_tren == 'activo' %}
+                                        class="{% if vagon.estado_vagon == 'activo' %}
                                             bg-red-600 hover:bg-red-700
                                         {% else %}
                                             bg-green-600 hover:bg-green-700
                                         {% endif %}
                                         text-white px-3 py-1 rounded text-sm font-semibold transition">
 
-                                        {% if tren.estado_tren == "activo" %}
+                                        {% if vagon.estado_vagon == "activo" %}
                                             Desactivar
                                         {% else %}
                                             Activar
@@ -114,7 +143,7 @@
                             </td>
 
                             <td class="px-6 py-4 text-center">
-                                <a href="{{ url_for('admin.edit_tren', tren_id=tren.id) }}"
+                                <a href="{{ url_for('admin.edit_vagon', vagon_id=vagon.id) }}"
                                    class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded text-sm font-semibold transition">
                                     Editar
                                 </a>
@@ -123,7 +152,7 @@
                     {% else %}
                         <tr>
                             <td colspan="8" class="px-6 py-6 text-center text-gray-400">
-                                No hay trenes registrados.
+                                Este tren todavía no tiene vagones registrados.
                             </td>
                         </tr>
                     {% endfor %}
@@ -137,5 +166,3 @@
 </section>
 
 {% endblock %}
-
-

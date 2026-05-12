@@ -1,0 +1,140 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<section class="bg-black flex-1 px-8 py-8 text-white">
+
+    <div class="max-w-3xl mx-auto">
+
+        <!-- Cabecera -->
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h1 class="text-3xl font-extrabold text-orange-500 uppercase">
+                    {{ title }}
+                </h1>
+                <p class="text-gray-300 text-sm mt-1">
+                    Modifica los datos del vagón seleccionado.
+                </p>
+            </div>
+
+            <a href="{{ url_for('admin.vagones_tren', tren_id=vagon.tren_id) }}"
+               class="bg-gray-700 hover:bg-gray-800 text-white font-bold px-4 py-2 rounded-lg transition">
+                Volver
+            </a>
+        </div>
+
+        <!-- Info del tren -->
+        <div class="bg-black border-4 border-orange-500 rounded-xl shadow-2xl p-5 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                    <p class="text-gray-400">Tren asociado</p>
+                    <p class="text-white font-bold">{{ tren.nombre }}</p>
+                </div>
+
+                <div>
+                    <p class="text-gray-400">Código del tren</p>
+                    <p class="text-white font-bold">{{ tren.codigo }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="bg-black border-4 border-orange-500 rounded-xl shadow-2xl p-8">
+
+            <form method="POST" action="{{ url_for('admin.edit_vagon', vagon_id=vagon.id) }}" class="flex flex-col gap-5">
+                {{ form.hidden_tag() }}
+
+                <!-- Nombre -->
+                <div class="flex flex-col">
+                    {{ form.nombre.label(class="text-orange-400 font-bold mb-2") }}
+
+                    {{ form.nombre(
+                        class="bg-gray-900 border border-orange-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    ) }}
+
+                    {% for error in form.nombre.errors %}
+                        <span class="text-red-400 text-sm mt-1">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                <!-- Filas -->
+                <div class="flex flex-col">
+                    {{ form.filas.label(class="text-orange-400 font-bold mb-2") }}
+
+                    {{ form.filas(
+                        class="bg-gray-900 border border-orange-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    ) }}
+
+                    {% for error in form.filas.errors %}
+                        <span class="text-red-400 text-sm mt-1">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                <!-- Columnas -->
+                <div class="flex flex-col">
+                    {{ form.columnas.label(class="text-orange-400 font-bold mb-2") }}
+
+                    {{ form.columnas(
+                        class="bg-gray-900 border border-orange-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    ) }}
+
+                    {% for error in form.columnas.errors %}
+                        <span class="text-red-400 text-sm mt-1">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                <!-- Estado -->
+                <div class="flex flex-col">
+                    {{ form.estado_vagon.label(class="text-orange-400 font-bold mb-2") }}
+
+                    {{ form.estado_vagon(
+                        class="bg-gray-900 border border-orange-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    ) }}
+
+                    {% for error in form.estado_vagon.errors %}
+                        <span class="text-red-400 text-sm mt-1">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                <!-- Capacidad actual -->
+                <div class="bg-gray-900 border border-orange-700 rounded-lg p-4">
+                    <p class="text-gray-400 text-sm">Capacidad actual</p>
+                    <p class="text-white font-bold mt-1">
+                        {{ vagon.capacidad_m2 }} m²
+                    </p>
+                    <p class="text-gray-300 text-sm mt-2">
+                        Al guardar, la capacidad se recalculará automáticamente según filas x columnas.
+                    </p>
+                </div>
+
+                <!-- Botones -->
+                <div class="flex justify-end gap-3 mt-4">
+                    <a href="{{ url_for('admin.vagones_tren', tren_id=vagon.tren_id) }}"
+                       class="bg-gray-700 hover:bg-gray-800 text-white font-bold px-5 py-2 rounded-lg transition">
+                        Cancelar
+                    </a>
+
+                    {{ form.submit(
+                        class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-5 py-2 rounded-lg transition cursor-pointer"
+                    ) }}
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
