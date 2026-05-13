@@ -1,0 +1,135 @@
+{% extends 'layout.html' %}
+
+{% block title %}Viajes{% endblock %}
+
+{% block content %}
+
+<section class="bg-black flex-1 px-8 py-8 text-white">
+
+    <div class="max-w-6xl mx-auto">
+
+        <!-- Cabecera -->
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h1 class="text-3xl font-extrabold text-orange-500 uppercase">
+                    Viajes
+                </h1>
+                <p class="text-gray-300 text-sm mt-1">
+                    Listado de viajes ferroviarios registrados en Valstrax Rail.
+                </p>
+            </div>
+
+            <div class="flex gap-3">
+                <a href="{{ url_for('admin.dashboard') }}"
+                   class="bg-gray-700 hover:bg-gray-800 text-white font-bold px-4 py-2 rounded-lg transition">
+                    Volver al panel
+                </a>
+
+                <a href="{{ url_for('admin.create_viaje') }}"
+                   class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 py-2 rounded-lg transition">
+                    Nuevo viaje
+                </a>
+            </div>
+        </div>
+
+        <!-- Tabla -->
+        <div class="bg-black">
+
+            <table class="datatable w-full text-left">
+                <thead class="bg-orange-500 text-white uppercase text-sm">
+                    <tr>
+                        <th class=" py-4">Tren</th>
+                        <th class=" py-4">Origen</th>
+                        <th class=" py-4">Destino</th>
+                        <th class=" py-4">Salida</th>
+                        <th class=" py-4">Llegada</th>
+                        <th class=" py-4 text-center">Estado</th>
+                        <th class=" py-4 text-center">Editar</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for viaje in viajes %}
+                        <tr class="border-b border-orange-800 hover:bg-gray-900 transition">
+                            
+
+                            <td class="px-6 py-4">
+                                <p class="font-semibold">{{ viaje.tren_nombre }}</p>
+                                <p class="text-gray-400 text-xs">{{ viaje.tren_codigo }}</p>
+                            </td>
+
+                            <td class="px-6 py-4 text-gray-300">
+                                {{ viaje.origen }}
+                            </td>
+
+                            <td class="px-6 py-4 text-gray-300">
+                                {{ viaje.destino }}
+                            </td>
+
+                            <td class="px-6 py-4 text-gray-300 whitespace-nowrap">
+                                {{ viaje.fecha_salida }}
+                            </td>
+
+                            <td class="px-6 py-4 text-gray-300 whitespace-nowrap">
+                                {% if viaje.fecha_llegada %}
+                                    {{ viaje.fecha_llegada }}
+                                {% else %}
+                                    <span class="text-gray-500">Sin definir</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="px-6 py-4 text-center">
+                                <form method="POST" action="{{ url_for('admin.update_estado_viaje', viaje_id=viaje.id) }}"
+                                      class="flex items-center justify-center gap-2">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                                    <select name="estado_viaje"
+                                            class="bg-gray-900 border border-orange-700 rounded px-2 py-1 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+                                        <option value="programado" {% if viaje.estado_viaje == "programado" %}selected{% endif %}>
+                                            Programado
+                                        </option>
+
+                                        <option value="en_transito" {% if viaje.estado_viaje == "en_transito" %}selected{% endif %}>
+                                            En tránsito
+                                        </option>
+
+                                        <option value="finalizado" {% if viaje.estado_viaje == "finalizado" %}selected{% endif %}>
+                                            Finalizado
+                                        </option>
+
+                                        <option value="cancelado" {% if viaje.estado_viaje == "cancelado" %}selected{% endif %}>
+                                            Cancelado
+                                        </option>
+                                    </select>
+
+                                    <button type="submit"
+                                            class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded text-sm font-semibold transition">
+                                        Guardar
+                                    </button>
+                                </form>
+                            </td>
+
+                            <td class="px-6 py-4 text-center">
+                                <a href="{{ url_for('admin.edit_viaje', viaje_id=viaje.id) }}"
+                                   class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded text-sm font-semibold transition inline-block whitespace-nowrap">
+                                    Editar
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="px-6 py-6 text-center text-gray-400">
+                                No hay viajes registrados.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

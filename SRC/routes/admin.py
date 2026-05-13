@@ -4,7 +4,8 @@ from functools import wraps
 from models.user import User
 from models.tren import Tren
 from models.vagon import Vagon
-from forms import TrenForm, VagonForm
+from models.viaje import Viaje
+from forms import TrenForm, VagonForm, ViajeForm
 
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
@@ -275,3 +276,121 @@ def toggle_vagon_estado(vagon_id):
 
     flash('Estado del vagón actualizado correctamente.', 'success')
     return redirect(url_for('admin.vagones_tren', tren_id=vagon.tren_id))
+
+
+@admin.route('/viajes')
+@login_required
+@admin_required
+def viajes():
+    viajes = Viaje.get_all()
+    return render_template('admin/viajes.html', viajes=viajes)
+
+
+@admin.route('/viajes/create', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def create_viaje():
+    form = ViajeForm()
+
+    trenes_activos = Tren.get_activos()
+    form.tren_id.choices = [
+        (tren.id, f'{tren.nombre} - {tren.codigo}')
+        for tren in trenes_activos
+    ]
+
+    if form.validate_on_submit():
+        tren_id = form.tren_id.data
+        origen = form.origen.data
+        destino = form.destino.data
+        fecha_salida = form.fecha_salida.data
+        fecha_llegada = form.fecha_llegada.data
+        estado_viaje = form.estado_viaje.data
+
+        if fecha_llegada and fecha_llegada <= fecha_salida:
+            flash('La fecha de llegada debe ser posterior a la fecha de salida.', 'danger')
+            return render_template('admin/viaje_insert.html', form=form, title='Nuevo viaje')
+
+        Viaje.create(
+            tren_id,
+            origen,
+            destino,
+            fecha_salida,
+            fecha_llegada,
+            estado_viaje
+        )
+
+        flash('Viaje creado correctamente.', 'success')
+        return redirect(url_for('admin.viajes'))
+
+    return render_template('admin/viaje_insert.html', form=form, title='Nuevo viaje')
+
+
+@admin.route('/viajes/<int:viaje_id>/edit', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_viaje(viaje_id):
+    viaje = Viaje.get_by_id(viaje_id)
+
+    if not viaje:
+        flash('El viaje no existe.', 'danger')
+        return redirect(url_for('admin.viajes'))
+
+    form = ViajeForm(obj=viaje)
+
+    trenes_activos = Tren.get_activos()
+    tren_actual = Tren.get_by_id(viaje.tren_id)
+
+    form.tren_id.choices = [
+        (tren.id, f'{tren.nombre} - {tren.codigo}')
+        for tren in trenes_activos
+    ]
+
+    if tren_actual and tren_actual.id not in [tren.id for tren in trenes_activos]:
+        form.tren_id.choices.append(
+            (tren_actual.id, f'{tren_actual.nombre} - {tren_actual.codigo}')
+        )
+
+    if form.validate_on_submit():
+        tren_id = form.tren_id.data
+        origen = form.origen.data
+        destino = form.destino.data
+        fecha_salida = form.fecha_salida.data
+        fecha_llegada = form.fecha_llegada.data
+        estado_viaje = form.estado_viaje.data
+
+        if fecha_llegada and fecha_llegada <= fecha_salida:
+            flash('La fecha de llegada debe ser posterior a la fecha de salida.', 'danger')
+            return render_template('admin/viaje_edit.html', form=form, viaje=viaje, title='Editar viaje')
+
+        Viaje.update(
+            viaje_id,
+            tren_id,
+            origen,
+            destino,
+            fecha_salida,
+            fecha_llegada,
+            estado_viaje
+        )
+
+        flash('Viaje actualizado correctamente.', 'success')
+        return redirect(url_for('admin.viajes'))
+
+    return render_template('admin/viaje_edit.html', form=form, viaje=viaje, title='Editar viaje')
+
+
+@admin.route('/viajes/<int:viaje_id>/estado', methods=['POST'])
+@login_required
+@admin_required
+def update_estado_viaje(viaje_id):
+    estado_viaje = request.form.get('estado_viaje')
+
+    estados_validos = ['programado', 'en_transito', 'finalizado', 'cancelado']
+
+    if estado_viaje not in estados_validos:
+        flash('Estado de viaje no válido.', 'danger')
+        return redirect(url_for('admin.viajes'))
+
+    Viaje.update_estado(viaje_id, estado_viaje)
+
+    flash('Estado del viaje actualizado correctamente.', 'success')
+    return redirect(url_for('admin.viajes'))

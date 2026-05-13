@@ -121,3 +121,29 @@ class Tren:
 
         mysql.connection.commit()
         cursor.close()
+
+    @classmethod
+    def get_activos(cls):
+        cursor = mysql.connection.cursor()
+        cursor.execute("""
+            SELECT id, nombre, codigo, estado_tren, created_at, updated_at
+            FROM trenes
+            WHERE estado_tren = 'activo'
+            ORDER BY nombre ASC
+        """)
+        rows = cursor.fetchall()
+        cursor.close()
+
+        trenes = []
+
+        for row in rows:
+            trenes.append(cls(
+                id=row[0],
+                nombre=row[1],
+                codigo=row[2],
+                estado_tren=row[3],
+                created_at=row[4],
+                updated_at=row[5]
+            ))
+
+        return trenes

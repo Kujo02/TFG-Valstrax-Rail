@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms.validators import Email,EqualTo,Length,DataRequired,NumberRange
-from wtforms.fields import EmailField,StringField,PasswordField,SubmitField,SelectField,IntegerField
+from wtforms.fields import EmailField,StringField,PasswordField,SubmitField,SelectField,IntegerField,DateTimeLocalField
 
 class RegisterForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(min=3, max=25)])
@@ -52,6 +52,44 @@ class VagonForm(FlaskForm):
     estado_vagon = SelectField('Estado',choices=[('activo', 'Activo'),('inactivo', 'Inactivo')],
             validators=[
             DataRequired(message='El estado del vagón es obligatorio.')
+        ]
+    )
+
+    submit = SubmitField('Guardar')
+
+
+
+class ViajeForm(FlaskForm):
+    tren_id = SelectField('Tren',coerce=int,validators=[DataRequired(message='Debes seleccionar un tren.')
+        ]
+    )
+
+    origen = StringField('Origen',validators=[DataRequired(message='El origen es obligatorio.'),
+            Length(min=2, max=100, message='El origen debe tener entre 2 y 100 caracteres.')
+        ]
+    )
+
+    destino = StringField('Destino',validators=[DataRequired(message='El destino es obligatorio.'),
+            Length(min=2, max=100, message='El destino debe tener entre 2 y 100 caracteres.')
+        ]
+    )
+
+    fecha_salida = DateTimeLocalField('Fecha de salida',format='%Y-%m-%dT%H:%M',
+        validators=[DataRequired(message='La fecha de salida es obligatoria.')
+        ]
+    )
+
+    fecha_llegada = DateTimeLocalField('Fecha de llegada',format='%Y-%m-%dT%H:%M')
+
+    estado_viaje = SelectField('Estado',
+        choices=[
+            ('programado', 'Programado'),
+            ('en_transito', 'En tránsito'),
+            ('finalizado', 'Finalizado'),
+            ('cancelado', 'Cancelado')
+        ],
+        validators=[
+            DataRequired(message='El estado del viaje es obligatorio.')
         ]
     )
 
