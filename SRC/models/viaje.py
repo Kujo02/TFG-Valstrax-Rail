@@ -146,3 +146,48 @@ class Viaje:
 
         mysql.connection.commit()
         cursor.close()
+
+    @classmethod
+    def get_disponibles(cls):
+        cursor = mysql.connection.cursor()
+
+        cursor.execute("""
+            SELECT 
+                v.id,
+                v.tren_id,
+                v.origen,
+                v.destino,
+                v.fecha_salida,
+                v.fecha_llegada,
+                v.estado_viaje,
+                v.created_at,
+                v.updated_at,
+                t.nombre,
+                t.codigo
+            FROM viajes v
+            JOIN trenes t ON v.tren_id = t.id
+            WHERE v.estado_viaje = 'programado'
+            ORDER BY v.fecha_salida ASC
+        """)
+
+        rows = cursor.fetchall()
+        cursor.close()
+
+        viajes = []
+
+        for row in rows:
+            viajes.append(cls(
+                id=row[0],
+                tren_id=row[1],
+                origen=row[2],
+                destino=row[3],
+                fecha_salida=row[4],
+                fecha_llegada=row[5],
+                estado_viaje=row[6],
+                created_at=row[7],
+                updated_at=row[8],
+                tren_nombre=row[9],
+                tren_codigo=row[10]
+            ))
+
+        return viajes

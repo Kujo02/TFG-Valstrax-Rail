@@ -1,6 +1,13 @@
 from flask_wtf import FlaskForm
 from wtforms.validators import Email,EqualTo,Length,DataRequired,NumberRange
-from wtforms.fields import EmailField,StringField,PasswordField,SubmitField,SelectField,IntegerField,DateTimeLocalField
+from wtforms.fields import EmailField,StringField,PasswordField,SubmitField,SelectField,IntegerField,DateTimeLocalField,TextAreaField
+
+
+#FORMULARIOS USUARIOS
+
+
+
+# FROMULARIO REGISTRO
 
 class RegisterForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(min=3, max=25)])
@@ -9,11 +16,20 @@ class RegisterForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Confirmar')
 
+# FORMULARIO LOGIN
+
 class LoginForm(FlaskForm):
     email = EmailField('Email', validators=[DataRequired(), Email(), Length(max=50)])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Confirmar')
 
+
+
+
+# FORMULARIOS ADMIN
+
+
+# FORMULARIO TRENES
 
 class TrenForm(FlaskForm):
     nombre = StringField('Nombre',validators=[DataRequired(message='El nombre es obligatorio.'),
@@ -58,6 +74,7 @@ class VagonForm(FlaskForm):
     submit = SubmitField('Guardar')
 
 
+# FORMULARIO VIAJES
 
 class ViajeForm(FlaskForm):
     tren_id = SelectField('Tren',coerce=int,validators=[DataRequired(message='Debes seleccionar un tren.')
@@ -94,3 +111,31 @@ class ViajeForm(FlaskForm):
     )
 
     submit = SubmitField('Guardar')
+
+
+# FORMULARIO PEDIDOS
+
+class PedidoForm(FlaskForm):
+    nombre_cliente = StringField('Nombre',validators=[DataRequired(message='El nombre es obligatorio.'),
+            Length(min=2, max=100, message='El nombre debe tener entre 2 y 100 caracteres.')
+        ]
+    )
+
+    email_cliente = StringField('Email',validators=[DataRequired(message='El email es obligatorio.'),
+            Email(message='Introduce un email válido.'),
+            Length(max=150, message='El email no puede superar los 150 caracteres.')
+        ]
+    )
+
+    descripcion = TextAreaField('Descripción de la carga',validators=[DataRequired(message='La descripción es obligatoria.'),
+            Length(min=5, max=500, message='La descripción debe tener entre 5 y 500 caracteres.')
+        ]
+    )
+
+    espacios_solicitados = IntegerField('Espacios solicitados (m²)',validators=[
+            DataRequired(message='Debes indicar los m² solicitados.'),
+            NumberRange(min=1, max=500, message='Los espacios solicitados deben estar entre 1 y 500 m².')
+        ]
+    )
+
+    submit = SubmitField('Reservar')

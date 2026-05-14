@@ -368,6 +368,12 @@ table.dataTable thead th span.dt-column-order {
         vertical-align: middle !important;
         white-space: nowrap !important;
     }
+    /* Centrar contenido de las celdas */
+    table.dataTable tbody td,
+    table.dataTable tbody th {
+        text-align: center !important;
+        vertical-align: middle !important;
+}
    /* Hacer las tablas más gorditas */
 table.dataTable thead th,
 table.dataTable thead td {
@@ -407,7 +413,7 @@ table.dataTable tbody td {
                 </li>
 
                 <li>
-                    <a href="#" class="hover:text-blue-300 transition">
+                    <a href="{{ url_for('main.reservar') }}" class="hover:text-blue-300 transition">
                         Reservar
                     </a>
                 </li>
@@ -429,7 +435,7 @@ table.dataTable tbody td {
                     </li>
 
                     <li>
-                        <a href="#" class="hover:text-blue-300 transition">
+                        <a href="{{ url_for('main.mis_pedidos') }}" class="hover:text-blue-300 transition">
                             Mis pedidos
                         </a>
                     </li>

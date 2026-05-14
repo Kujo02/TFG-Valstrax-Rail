@@ -1,0 +1,171 @@
+{% extends 'layout.html' %}
+
+{% block title %}Mis pedidos{% endblock %}
+
+{% block content %}
+
+<section class="bg-gray-100 flex-1 px-8 py-10">
+
+    <div class="max-w-6xl mx-auto">
+
+        <!-- Cabecera -->
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-4xl font-extrabold text-blue-900 uppercase">
+                    Mis pedidos
+                </h1>
+                <p class="text-gray-600 mt-2">
+                    Consulta el estado de tus reservas y pedidos realizados.
+                </p>
+            </div>
+
+            <a href="{{ url_for('main.reservar') }}"
+               class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-5 py-3 rounded-lg transition">
+                Nueva reserva
+            </a>
+        </div>
+
+        {% if pedidos %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+                {% for pedido in pedidos %}
+
+                    <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-2xl transition">
+
+                        <!-- Header -->
+                        <div class="bg-blue-900 text-white px-6 py-4">
+                            <h2 class="text-xl font-bold">
+                                Pedido #{{ pedido.id }}
+                            </h2>
+                            <p class="text-blue-200 text-sm mt-1">
+                                {{ pedido.origen }} → {{ pedido.destino }}
+                            </p>
+                        </div>
+
+                        <!-- Contenido -->
+                        <div class="p-6 space-y-4">
+
+                            <div>
+                                <p class="text-gray-500 text-sm font-semibold">
+                                    Tren
+                                </p>
+                                <p class="text-gray-900 font-bold">
+                                    {{ pedido.tren_nombre }}
+                                </p>
+                                <p class="text-gray-500 text-xs">
+                                    {{ pedido.tren_codigo }}
+                                </p>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-3">
+                                <div>
+                                    <p class="text-gray-500 text-sm font-semibold">
+                                        Salida
+                                    </p>
+                                    <p class="text-gray-900 font-bold">
+                                        {{ pedido.fecha_salida }}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <p class="text-gray-500 text-sm font-semibold">
+                                        Llegada
+                                    </p>
+                                    <p class="text-gray-900 font-bold">
+                                        {% if pedido.fecha_llegada %}
+                                            {{ pedido.fecha_llegada }}
+                                        {% else %}
+                                            Sin definir
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p class="text-gray-500 text-sm font-semibold">
+                                    Espacio solicitado
+                                </p>
+                                <p class="text-gray-900 font-bold">
+                                    {{ pedido.espacios_solicitados }} m²
+                                </p>
+                            </div>
+
+                            <div>
+                                <p class="text-gray-500 text-sm font-semibold">
+                                    Estado
+                                </p>
+
+                                {% if pedido.estado_pedido == "pendiente" %}
+                                    <span class="inline-block mt-1 bg-yellow-100 text-yellow-700 border border-yellow-300 px-3 py-1 rounded-full text-sm font-bold">
+                                        Pendiente
+                                    </span>
+                                {% elif pedido.estado_pedido == "aceptado" %}
+                                    <span class="inline-block mt-1 bg-green-100 text-green-700 border border-green-300 px-3 py-1 rounded-full text-sm font-bold">
+                                        Aceptado
+                                    </span>
+                                {% elif pedido.estado_pedido == "rechazado" %}
+                                    <span class="inline-block mt-1 bg-red-100 text-red-700 border border-red-300 px-3 py-1 rounded-full text-sm font-bold">
+                                        Rechazado
+                                    </span>
+                                {% elif pedido.estado_pedido == "en_transito" %}
+                                    <span class="inline-block mt-1 bg-blue-100 text-blue-700 border border-blue-300 px-3 py-1 rounded-full text-sm font-bold">
+                                        En tránsito
+                                    </span>
+                                {% elif pedido.estado_pedido == "entregado" %}
+                                    <span class="inline-block mt-1 bg-purple-100 text-purple-700 border border-purple-300 px-3 py-1 rounded-full text-sm font-bold">
+                                        Entregado
+                                    </span>
+                                {% elif pedido.estado_pedido == "cancelado" %}
+                                    <span class="inline-block mt-1 bg-gray-200 text-gray-700 border border-gray-300 px-3 py-1 rounded-full text-sm font-bold">
+                                        Cancelado
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <p class="text-gray-500 text-sm font-semibold">
+                                    Descripción
+                                </p>
+                                <p class="text-gray-700 text-sm mt-1">
+                                    {{ pedido.descripcion }}
+                                </p>
+                            </div>
+
+                            <div class="pt-3 border-t border-gray-200">
+                                <p class="text-gray-500 text-xs">
+                                    Creado el {{ pedido.created_at }}
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="bg-white border border-gray-200 rounded-2xl shadow-lg p-10 text-center">
+                <h2 class="text-2xl font-bold text-blue-900">
+                    Todavía no tienes pedidos
+                </h2>
+                <p class="text-gray-600 mt-2">
+                    Cuando realices una reserva, aparecerá en esta sección.
+                </p>
+
+                <a href="{{ url_for('main.reservar') }}"
+                   class="inline-block mt-6 bg-blue-700 hover:bg-blue-800 text-white font-bold px-6 py-3 rounded-lg transition">
+                    Ver viajes disponibles
+                </a>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

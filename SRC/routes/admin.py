@@ -5,6 +5,7 @@ from models.user import User
 from models.tren import Tren
 from models.vagon import Vagon
 from models.viaje import Viaje
+from models.pedido import Pedido
 from forms import TrenForm, VagonForm, ViajeForm
 
 
@@ -394,3 +395,38 @@ def update_estado_viaje(viaje_id):
 
     flash('Estado del viaje actualizado correctamente.', 'success')
     return redirect(url_for('admin.viajes'))
+
+
+@admin.route('/pedidos')
+@login_required
+@admin_required
+def pedidos():
+    pedidos = Pedido.get_all()
+    return render_template('admin/pedidos.html', pedidos=pedidos)
+
+
+
+
+@admin.route('/pedidos/<int:pedido_id>/estado', methods=['POST'])
+@login_required
+@admin_required
+def update_estado_pedido(pedido_id):
+    estado_pedido = request.form.get('estado_pedido')
+
+    estados_validos = [
+        'pendiente',
+        'aceptado',
+        'rechazado',
+        'en_transito',
+        'entregado',
+        'cancelado'
+    ]
+
+    if estado_pedido not in estados_validos:
+        flash('Estado de pedido no válido.', 'danger')
+        return redirect(url_for('admin.pedidos'))
+
+    Pedido.update_estado(pedido_id, estado_pedido)
+
+    flash('Estado del pedido actualizado correctamente.', 'success')
+    return redirect(url_for('admin.pedidos'))

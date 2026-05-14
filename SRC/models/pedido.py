@@ -1,0 +1,229 @@
+from DB.db import mysql
+
+
+class Pedido:
+    def __init__(self,id=None,user_id=None,viaje_id=None,nombre_cliente=None,email_cliente=None,descripcion=None,
+                espacios_solicitados=None,estado_pedido=None,created_at=None,updated_at=None,user_nombre=None,
+                user_email=None,origen=None,destino=None,fecha_salida=None,fecha_llegada=None,tren_nombre=None,tren_codigo=None
+    ):
+        self.id = id
+        self.user_id = user_id
+        self.viaje_id = viaje_id
+        self.nombre_cliente = nombre_cliente
+        self.email_cliente = email_cliente
+        self.descripcion = descripcion
+        self.espacios_solicitados = espacios_solicitados
+        self.estado_pedido = estado_pedido
+        self.created_at = created_at
+        self.updated_at = updated_at
+
+        self.user_nombre = user_nombre
+        self.user_email = user_email
+
+        self.origen = origen
+        self.destino = destino
+        self.fecha_salida = fecha_salida
+        self.fecha_llegada = fecha_llegada
+
+        self.tren_nombre = tren_nombre
+        self.tren_codigo = tren_codigo
+
+    @classmethod
+    def create(cls, user_id, viaje_id, nombre_cliente, email_cliente, descripcion, espacios_solicitados):
+        cursor = mysql.connection.cursor()
+
+        cursor.execute("""
+            INSERT INTO pedidos 
+            (user_id, viaje_id, nombre_cliente, email_cliente, descripcion, espacios_solicitados)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (user_id, viaje_id, nombre_cliente, email_cliente, descripcion, espacios_solicitados))
+
+        mysql.connection.commit()
+        cursor.close()
+
+    @classmethod
+    def get_all(cls):
+        cursor = mysql.connection.cursor()
+
+        cursor.execute("""
+            SELECT 
+                p.id,
+                p.user_id,
+                p.viaje_id,
+                p.nombre_cliente,
+                p.email_cliente,
+                p.descripcion,
+                p.espacios_solicitados,
+                p.estado_pedido,
+                p.created_at,
+                p.updated_at,
+                u.name,
+                u.email,
+                v.origen,
+                v.destino,
+                v.fecha_salida,
+                v.fecha_llegada,
+                t.nombre,
+                t.codigo
+            FROM pedidos p
+            LEFT JOIN users u ON p.user_id = u.id
+            JOIN viajes v ON p.viaje_id = v.id
+            JOIN trenes t ON v.tren_id = t.id
+            ORDER BY p.created_at DESC
+        """)
+
+        rows = cursor.fetchall()
+        cursor.close()
+
+        pedidos = []
+
+        for row in rows:
+            pedidos.append(cls(
+                id=row[0],
+                user_id=row[1],
+                viaje_id=row[2],
+                nombre_cliente=row[3],
+                email_cliente=row[4],
+                descripcion=row[5],
+                espacios_solicitados=row[6],
+                estado_pedido=row[7],
+                created_at=row[8],
+                updated_at=row[9],
+                user_nombre=row[10],
+                user_email=row[11],
+                origen=row[12],
+                destino=row[13],
+                fecha_salida=row[14],
+                fecha_llegada=row[15],
+                tren_nombre=row[16],
+                tren_codigo=row[17]
+            ))
+
+        return pedidos
+
+    @classmethod
+    def get_by_user(cls, user_id):
+        cursor = mysql.connection.cursor()
+
+        cursor.execute("""
+            SELECT 
+                p.id,
+                p.user_id,
+                p.viaje_id,
+                p.nombre_cliente,
+                p.email_cliente,
+                p.descripcion,
+                p.espacios_solicitados,
+                p.estado_pedido,
+                p.created_at,
+                p.updated_at,
+                v.origen,
+                v.destino,
+                v.fecha_salida,
+                v.fecha_llegada,
+                t.nombre,
+                t.codigo
+            FROM pedidos p
+            JOIN viajes v ON p.viaje_id = v.id
+            JOIN trenes t ON v.tren_id = t.id
+            WHERE p.user_id = %s
+            ORDER BY p.created_at DESC
+        """, (user_id,))
+
+        rows = cursor.fetchall()
+        cursor.close()
+
+        pedidos = []
+
+        for row in rows:
+            pedidos.append(cls(
+                id=row[0],
+                user_id=row[1],
+                viaje_id=row[2],
+                nombre_cliente=row[3],
+                email_cliente=row[4],
+                descripcion=row[5],
+                espacios_solicitados=row[6],
+                estado_pedido=row[7],
+                created_at=row[8],
+                updated_at=row[9],
+                origen=row[10],
+                destino=row[11],
+                fecha_salida=row[12],
+                fecha_llegada=row[13],
+                tren_nombre=row[14],
+                tren_codigo=row[15]
+            ))
+
+        return pedidos
+
+    @classmethod
+    def get_by_id(cls, pedido_id):
+        cursor = mysql.connection.cursor()
+
+        cursor.execute("""
+            SELECT 
+                p.id,
+                p.user_id,
+                p.viaje_id,
+                p.nombre_cliente,
+                p.email_cliente,
+                p.descripcion,
+                p.espacios_solicitados,
+                p.estado_pedido,
+                p.created_at,
+                p.updated_at,
+                u.name,
+                u.email,
+                v.origen,
+                v.destino,
+                v.fecha_salida,
+                v.fecha_llegada,
+                t.nombre,
+                t.codigo
+            FROM pedidos p
+            LEFT JOIN users u ON p.user_id = u.id
+            JOIN viajes v ON p.viaje_id = v.id
+            JOIN trenes t ON v.tren_id = t.id
+            WHERE p.id = %s
+        """, (pedido_id,))
+
+        row = cursor.fetchone()
+        cursor.close()
+
+        if row:
+            return cls(
+                id=row[0],
+                user_id=row[1],
+                viaje_id=row[2],
+                nombre_cliente=row[3],
+                email_cliente=row[4],
+                descripcion=row[5],
+                espacios_solicitados=row[6],
+                estado_pedido=row[7],
+                created_at=row[8],
+                updated_at=row[9],
+                user_nombre=row[10],
+                user_email=row[11],
+                origen=row[12],
+                destino=row[13],
+                fecha_salida=row[14],
+                fecha_llegada=row[15],
+                tren_nombre=row[16],
+                tren_codigo=row[17]
+            )
+
+        return None
+
+    @classmethod
+    def update_estado(cls, pedido_id, estado_pedido):
+        cursor = mysql.connection.cursor()
+
+        cursor.execute("""
+            UPDATE pedidos
+            SET estado_pedido = %s
+            WHERE id = %s
+        """, (estado_pedido, pedido_id))
+
+        mysql.connection.commit()
+        cursor.close()

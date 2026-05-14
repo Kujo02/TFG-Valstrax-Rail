@@ -38,38 +38,42 @@
             <table class="datatable w-full text-left">
                 <thead class="bg-orange-500 text-white uppercase text-sm">
                     <tr>
-                        <th class=" py-4">Tren</th>
-                        <th class=" py-4">Origen</th>
-                        <th class=" py-4">Destino</th>
-                        <th class=" py-4">Salida</th>
-                        <th class=" py-4">Llegada</th>
-                        <th class=" py-4 text-center">Estado</th>
-                        <th class=" py-4 text-center">Editar</th>
+                        <th class="py-4">Tren</th>
+                        <th class="py-4">Origen</th>
+                        <th class="py-4">Destino</th>
+                        <th class="py-4">Salida</th>
+                        <th class="py-4">Llegada</th>
+                        <th class="py-4 text-center">Estado</th>
+                        <th class="py-4 text-center">Editar</th>
                     </tr>
                 </thead>
 
                 <tbody>
                     {% for viaje in viajes %}
                         <tr class="border-b border-orange-800 hover:bg-gray-900 transition">
-                            
 
+                            <!-- Tren -->
                             <td class="px-6 py-4">
                                 <p class="font-semibold">{{ viaje.tren_nombre }}</p>
                                 <p class="text-gray-400 text-xs">{{ viaje.tren_codigo }}</p>
                             </td>
 
+                            <!-- Origen -->
                             <td class="px-6 py-4 text-gray-300">
                                 {{ viaje.origen }}
                             </td>
 
+                            <!-- Destino -->
                             <td class="px-6 py-4 text-gray-300">
                                 {{ viaje.destino }}
                             </td>
 
+                            <!-- Salida -->
                             <td class="px-6 py-4 text-gray-300 whitespace-nowrap">
                                 {{ viaje.fecha_salida }}
                             </td>
 
+                            <!-- Llegada -->
                             <td class="px-6 py-4 text-gray-300 whitespace-nowrap">
                                 {% if viaje.fecha_llegada %}
                                     {{ viaje.fecha_llegada }}
@@ -78,13 +82,27 @@
                                 {% endif %}
                             </td>
 
+                            <!-- Estado -->
                             <td class="px-6 py-4 text-center">
                                 <form method="POST" action="{{ url_for('admin.update_estado_viaje', viaje_id=viaje.id) }}"
                                       class="flex items-center justify-center gap-2">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                                     <select name="estado_viaje"
-                                            class="bg-gray-900 border border-orange-700 rounded px-2 py-1 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+                                            class="border rounded px-2 py-1 text-white text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500
+                                            {% if viaje.estado_viaje == 'programado' %}
+                                                bg-blue-700 border-blue-500
+                                            {% elif viaje.estado_viaje == 'en_transito' %}
+                                                bg-yellow-600 border-yellow-400
+                                            {% elif viaje.estado_viaje == 'finalizado' %}
+                                                bg-green-700 border-green-500
+                                            {% elif viaje.estado_viaje == 'cancelado' %}
+                                                bg-red-700 border-red-500
+                                            {% else %}
+                                                bg-gray-900 border-orange-700
+                                            {% endif %}
+                                            ">
+
                                         <option value="programado" {% if viaje.estado_viaje == "programado" %}selected{% endif %}>
                                             Programado
                                         </option>
@@ -109,6 +127,7 @@
                                 </form>
                             </td>
 
+                            <!-- Editar -->
                             <td class="px-6 py-4 text-center">
                                 <a href="{{ url_for('admin.edit_viaje', viaje_id=viaje.id) }}"
                                    class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded text-sm font-semibold transition inline-block whitespace-nowrap">
@@ -116,9 +135,10 @@
                                 </a>
                             </td>
                         </tr>
+
                     {% else %}
                         <tr>
-                            <td colspan="8" class="px-6 py-6 text-center text-gray-400">
+                            <td colspan="7" class="px-6 py-6 text-center text-gray-400">
                                 No hay viajes registrados.
                             </td>
                         </tr>

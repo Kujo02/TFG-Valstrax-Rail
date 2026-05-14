@@ -1,0 +1,191 @@
+{% extends 'layout.html' %}
+
+{% block title %}Reservar espacio{% endblock %}
+
+{% block content %}
+
+<section class="bg-gray-100 flex-1 px-8 py-10">
+
+    <div class="max-w-5xl mx-auto">
+
+        <!-- Cabecera -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-extrabold text-blue-900 uppercase">
+                Reservar espacio
+            </h1>
+            <p class="text-gray-600 mt-2">
+                Completa los datos de la reserva para el viaje seleccionado.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Información del viaje -->
+            <div class="lg:col-span-1">
+
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+
+                    <div class="bg-blue-900 text-white px-6 py-4">
+                        <h2 class="text-xl font-bold">
+                            {{ viaje.origen }} → {{ viaje.destino }}
+                        </h2>
+                        <p class="text-blue-200 text-sm mt-1">
+                            {{ viaje.tren_nombre }} · {{ viaje.tren_codigo }}
+                        </p>
+                    </div>
+
+                    <div class="p-6 space-y-5">
+
+                        <div>
+                            <p class="text-gray-500 text-sm font-semibold">
+                                Salida
+                            </p>
+                            <p class="text-gray-900 font-bold">
+                                {{ viaje.fecha_salida }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-gray-500 text-sm font-semibold">
+                                Llegada
+                            </p>
+                            <p class="text-gray-900 font-bold">
+                                {% if viaje.fecha_llegada %}
+                                    {{ viaje.fecha_llegada }}
+                                {% else %}
+                                    Sin definir
+                                {% endif %}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-gray-500 text-sm font-semibold">
+                                Estado
+                            </p>
+                            <span class="inline-block mt-1 bg-green-100 text-green-700 border border-green-300 px-3 py-1 rounded-full text-sm font-bold">
+                                Disponible
+                            </span>
+                        </div>
+
+                        <div class="pt-3">
+                            <a href="{{ url_for('main.reservar') }}"
+                               class="block text-center bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-lg transition">
+                                Volver a viajes
+                            </a>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Formulario -->
+            <div class="lg:col-span-2">
+
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+
+                    <h2 class="text-2xl font-extrabold text-blue-900 uppercase mb-6">
+                        Datos de la reserva
+                    </h2>
+
+                    <form method="POST" action="{{ url_for('main.reservar_viaje', viaje_id=viaje.id) }}" class="space-y-5">
+                        {{ form.hidden_tag() }}
+
+                        <!-- Nombre -->
+                        <div>
+                            {{ form.nombre_cliente.label(class="block text-gray-700 font-bold mb-2") }}
+
+                            {{ form.nombre_cliente(
+                                class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-700",
+                                placeholder="Ejemplo: Pepe Calimocho"
+                            ) }}
+
+                            {% for error in form.nombre_cliente.errors %}
+                                <p class="text-red-600 text-sm mt-1 font-semibold">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Email -->
+                        <div>
+                            {{ form.email_cliente.label(class="block text-gray-700 font-bold mb-2") }}
+
+                            {{ form.email_cliente(
+                                class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-700",
+                                placeholder="Ejemplo: cliente@email.com"
+                            ) }}
+
+                            {% for error in form.email_cliente.errors %}
+                                <p class="text-red-600 text-sm mt-1 font-semibold">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Espacios -->
+                        <div>
+                            {{ form.espacios_solicitados.label(class="block text-gray-700 font-bold mb-2") }}
+
+                            {{ form.espacios_solicitados(
+                                class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-700",
+                                placeholder="Ejemplo: 10"
+                            ) }}
+
+                            {% for error in form.espacios_solicitados.errors %}
+                                <p class="text-red-600 text-sm mt-1 font-semibold">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Descripción -->
+                        <div>
+                            {{ form.descripcion.label(class="block text-gray-700 font-bold mb-2") }}
+
+                            {{ form.descripcion(
+                                class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-700",
+                                rows="5",
+                                placeholder="Describe brevemente la mercancía que quieres transportar..."
+                            ) }}
+
+                            {% for error in form.descripcion.errors %}
+                                <p class="text-red-600 text-sm mt-1 font-semibold">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Aviso -->
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <p class="text-blue-900 text-sm font-semibold">
+                                La reserva quedará en estado pendiente hasta que sea revisada por administración.
+                            </p>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="flex justify-end gap-3 pt-4">
+                            <a href="{{ url_for('main.reservar') }}"
+                               class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold px-6 py-3 rounded-lg transition">
+                                Cancelar
+                            </a>
+
+                            {{ form.submit(
+                                class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-6 py-3 rounded-lg transition cursor-pointer"
+                            ) }}
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
