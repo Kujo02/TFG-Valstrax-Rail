@@ -4,24 +4,74 @@
 
 {% block content %}
 
-<section class="bg-black flex-1 flex items-center justify-center px-6 py-6">
+<section class="bg-black flex-1 flex items-center justify-center px-6 py-8 text-white">
 
-    <div class="w-full max-w-5xl bg-black border-4 border-orange-500 rounded-xl overflow-hidden shadow-2xl">
+    <div class="w-full max-w-6xl bg-black border-4 border-orange-500 rounded-xl overflow-hidden shadow-2xl">
 
         <!-- Cabecera -->
-        <div class="bg-black border-b border-orange-500 px-8 py-4 flex items-center gap-4">
-            <div class="text-orange-400 text-3xl">
+        <div class="bg-black border-b border-orange-500 px-8 py-6 flex items-center gap-4">
+            <div class="text-orange-400 text-4xl">
                 ⚙️
             </div>
 
             <div>
-                <h1 class="text-orange-500 text-2xl font-extrabold uppercase">
+                <h1 class="text-orange-500 text-3xl font-extrabold uppercase">
                     Panel de Administrador
                 </h1>
-                <p class="text-gray-200 text-sm font-semibold">
-                    Gestión completa del sistema ferroviario.
+                <p class="text-gray-300 text-sm font-semibold mt-1">
+                    Gestión completa del sistema ferroviario Valstrax Rail.
                 </p>
             </div>
+        </div>
+
+        <!-- Resumen rápido -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 px-8 py-6 border-b border-orange-800">
+
+            <div class="bg-gray-900 border border-orange-700 rounded-xl p-4 text-center">
+                <p class="text-orange-400 text-2xl font-extrabold">
+                    {{ total_usuarios }}
+                </p>
+                <p class="text-gray-300 text-xs font-bold uppercase mt-1">
+                    Usuarios
+                </p>
+            </div>
+
+            <div class="bg-gray-900 border border-orange-700 rounded-xl p-4 text-center">
+                <p class="text-orange-400 text-2xl font-extrabold">
+                    {{ trenes_activos }}
+                </p>
+                <p class="text-gray-300 text-xs font-bold uppercase mt-1">
+                    Trenes activos
+                </p>
+            </div>
+
+            <div class="bg-gray-900 border border-orange-700 rounded-xl p-4 text-center">
+                <p class="text-orange-400 text-2xl font-extrabold">
+                    {{ vagones_activos }}
+                </p>
+                <p class="text-gray-300 text-xs font-bold uppercase mt-1">
+                    Vagones activos
+                </p>
+            </div>
+
+            <div class="bg-gray-900 border border-orange-700 rounded-xl p-4 text-center">
+                <p class="text-orange-400 text-2xl font-extrabold">
+                    {{ viajes_programados }}
+                </p>
+                <p class="text-gray-300 text-xs font-bold uppercase mt-1">
+                    Viajes programados
+                </p>
+            </div>
+
+            <div class="bg-gray-900 border border-orange-700 rounded-xl p-4 text-center">
+                <p class="text-orange-400 text-2xl font-extrabold">
+                    {{ pedidos_pendientes }}
+                </p>
+                <p class="text-gray-300 text-xs font-bold uppercase mt-1">
+                    Pedidos pendientes
+                </p>
+            </div>
+
         </div>
 
         <!-- Grid de tarjetas -->
@@ -29,56 +79,110 @@
 
             <!-- Usuarios -->
             <a href="{{ url_for('admin.users') }}"
-               class="h-40 border-r border-b border-orange-700 flex items-center justify-center hover:bg-yellow-900 transition">
-                <div class="bg-orange-500 hover:bg-orange-600 rounded-xl w-36 h-24 flex flex-col items-center justify-center shadow-lg transition">
-                    <div class="text-white text-2xl mb-1">👤</div>
-                    <h2 class="text-white font-extrabold text-base uppercase">Usuarios</h2>
+               class="h-48 border-r border-b border-orange-700 flex items-center justify-center hover:bg-gray-900 transition">
+
+                <div class="bg-orange-500 hover:bg-orange-600 rounded-xl w-44 h-32 flex flex-col items-center justify-center shadow-lg transition">
+                    <div class="text-white text-3xl mb-2">👤</div>
+
+                    <h2 class="text-white font-extrabold text-base uppercase">
+                        Usuarios
+                    </h2>
+
+                    <p class="text-orange-100 text-xs font-semibold mt-1">
+                        {{ total_usuarios }} registrados
+                    </p>
                 </div>
+
             </a>
 
             <!-- Trenes -->
             <a href="{{ url_for('admin.trenes') }}"
-               class="h-40 border-r border-b border-orange-700 flex items-center justify-center hover:bg-yellow-900 transition">
-                <div class="bg-orange-500 hover:bg-orange-600 rounded-xl w-36 h-24 flex flex-col items-center justify-center shadow-lg transition">
-                    <div class="text-white text-2xl mb-1">🚆</div>
-                    <h2 class="text-white font-extrabold text-base uppercase">Trenes</h2>
+               class="h-48 border-r border-b border-orange-700 flex items-center justify-center hover:bg-gray-900 transition">
+
+                <div class="bg-orange-500 hover:bg-orange-600 rounded-xl w-44 h-32 flex flex-col items-center justify-center shadow-lg transition">
+                    <div class="text-white text-3xl mb-2">🚆</div>
+
+                    <h2 class="text-white font-extrabold text-base uppercase">
+                        Trenes
+                    </h2>
+
+                    <p class="text-orange-100 text-xs font-semibold mt-1">
+                        {{ trenes_activos }} activos
+                    </p>
                 </div>
+
             </a>
 
             <!-- Vagones -->
             <a href="{{ url_for('admin.vagones') }}"
-               class="h-40 border-b border-orange-700 flex items-center justify-center hover:bg-yellow-900 transition">
-                <div class="bg-orange-500 hover:bg-orange-600 rounded-xl w-36 h-24 flex flex-col items-center justify-center shadow-lg transition">
-                    <div class="text-white text-2xl mb-1">📦</div>
-                    <h2 class="text-white font-extrabold text-base uppercase">Vagones</h2>
+               class="h-48 border-b border-orange-700 flex items-center justify-center hover:bg-gray-900 transition">
+
+                <div class="bg-orange-500 hover:bg-orange-600 rounded-xl w-44 h-32 flex flex-col items-center justify-center shadow-lg transition">
+                    <div class="text-white text-3xl mb-2">📦</div>
+
+                    <h2 class="text-white font-extrabold text-base uppercase">
+                        Vagones
+                    </h2>
+
+                    <p class="text-orange-100 text-xs font-semibold mt-1">
+                        {{ vagones_activos }} activos
+                    </p>
                 </div>
+
             </a>
 
             <!-- Viajes -->
             <a href="{{ url_for('admin.viajes') }}"
-               class="h-40 border-r border-orange-700 flex items-center justify-center hover:bg-yellow-900 transition">
-                <div class="bg-orange-500 hover:bg-orange-600 rounded-xl w-36 h-24 flex flex-col items-center justify-center shadow-lg transition">
-                    <div class="text-white text-2xl mb-1">🛤️</div>
-                    <h2 class="text-white font-extrabold text-base uppercase">Viajes</h2>
+               class="h-48 border-r border-orange-700 flex items-center justify-center hover:bg-gray-900 transition">
+
+                <div class="bg-orange-500 hover:bg-orange-600 rounded-xl w-44 h-32 flex flex-col items-center justify-center shadow-lg transition">
+                    <div class="text-white text-3xl mb-2">🛤️</div>
+
+                    <h2 class="text-white font-extrabold text-base uppercase">
+                        Viajes
+                    </h2>
+
+                    <p class="text-orange-100 text-xs font-semibold mt-1">
+                        {{ viajes_programados }} programados
+                    </p>
                 </div>
+
             </a>
 
             <!-- Pedidos -->
             <a href="{{ url_for('admin.pedidos') }}"
-               class="h-40 border-r border-orange-700 flex items-center justify-center hover:bg-yellow-900 transition">
-                <div class="bg-orange-500 hover:bg-orange-600 rounded-xl w-36 h-24 flex flex-col items-center justify-center shadow-lg transition">
-                    <div class="text-white text-2xl mb-1">📋</div>
-                    <h2 class="text-white font-extrabold text-base uppercase">Pedidos</h2>
+               class="h-48 border-r border-orange-700 flex items-center justify-center hover:bg-gray-900 transition">
+
+                <div class="bg-orange-500 hover:bg-orange-600 rounded-xl w-44 h-32 flex flex-col items-center justify-center shadow-lg transition">
+                    <div class="text-white text-3xl mb-2">📋</div>
+
+                    <h2 class="text-white font-extrabold text-base uppercase">
+                        Pedidos
+                    </h2>
+
+                    <p class="text-orange-100 text-xs font-semibold mt-1">
+                        {{ pedidos_pendientes }} pendientes
+                    </p>
                 </div>
+
             </a>
 
             <!-- Asignaciones -->
             <a href="#"
-               class="h-40 flex items-center justify-center hover:bg-yellow-900 transition">
-                <div class="bg-orange-500 hover:bg-orange-600 rounded-xl w-36 h-24 flex flex-col items-center justify-center shadow-lg transition">
-                    <div class="text-white text-2xl mb-1">🧩</div>
-                    <h2 class="text-white font-extrabold text-sm uppercase">Asignaciones</h2>
+               class="h-48 flex items-center justify-center hover:bg-gray-900 transition">
+
+                <div class="bg-orange-500 hover:bg-orange-600 rounded-xl w-44 h-32 flex flex-col items-center justify-center shadow-lg transition">
+                    <div class="text-white text-3xl mb-2">🧩</div>
+
+                    <h2 class="text-white font-extrabold text-sm uppercase">
+                        Asignaciones
+                    </h2>
+
+                    <p class="text-orange-100 text-xs font-semibold mt-1">
+                        Próximamente
+                    </p>
                 </div>
+
             </a>
 
         </div>
@@ -87,4 +191,4 @@
 
 </section>
 
-{% endblock %}
+{% endblock %}  

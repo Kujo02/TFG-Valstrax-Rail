@@ -30,7 +30,20 @@ def admin_required(f):
 @login_required
 @admin_required
 def dashboard():
-    return render_template('admin/dashboard.html')
+    total_usuarios = User.count_all()
+    trenes_activos = Tren.count_activos()
+    vagones_activos = Vagon.count_activos()
+    viajes_programados = Viaje.count_programados()
+    pedidos_pendientes = Pedido.count_pendientes()
+
+    return render_template(
+        'admin/dashboard.html',
+        total_usuarios=total_usuarios,
+        trenes_activos=trenes_activos,
+        vagones_activos=vagones_activos,
+        viajes_programados=viajes_programados,
+        pedidos_pendientes=pedidos_pendientes
+    )
 
 
 @admin.route('/users')

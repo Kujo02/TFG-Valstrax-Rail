@@ -145,7 +145,9 @@ class Viaje:
         """, (estado_viaje, viaje_id))
 
         mysql.connection.commit()
+
         cursor.close()
+
 
     @classmethod
     def get_disponibles(cls):
@@ -176,7 +178,7 @@ class Viaje:
         viajes = []
 
         for row in rows:
-            viajes.append(cls(
+            viaje = cls(
                 id=row[0],
                 tren_id=row[1],
                 origen=row[2],
@@ -188,9 +190,16 @@ class Viaje:
                 updated_at=row[8],
                 tren_nombre=row[9],
                 tren_codigo=row[10]
-            ))
+            )
+
+            viaje.capacidad_total = cls.get_capacidad_total(viaje.id)
+            viaje.espacio_reservado = cls.get_espacio_reservado(viaje.id)
+            viaje.espacio_disponible = cls.get_espacio_disponible(viaje.id)
+
+            viajes.append(viaje)
 
         return viajes
+
     
 
     @classmethod
@@ -233,4 +242,27 @@ class Viaje:
         capacidad_total = cls.get_capacidad_total(viaje_id)
         espacio_reservado = cls.get_espacio_reservado(viaje_id)
 
-        return capacidad_total - espacio_reservado
+
+        disponible = capacidad_total - espacio_reservado
+
+
+        if disponible < 0:
+            return 0
+
+        return disponible
+
+
+    @classmethod
+    def count_programados(cls):
+        cursor = mysql.connection.cursor()
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM viajes
+            WHERE estado_viaje = 'programado'
+        """)
+
+        total = cursor.fetchone()[0]
+        cursor.close()
+
+        return total

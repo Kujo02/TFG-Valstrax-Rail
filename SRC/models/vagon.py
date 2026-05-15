@@ -219,3 +219,19 @@ class Vagon:
 
         mysql.connection.commit()
         cursor.close()
+
+
+    @classmethod
+    def count_activos(cls):
+        cursor = mysql.connection.cursor()
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM vagones
+            WHERE estado_vagon = 'activo'
+        """)
+
+        total = cursor.fetchone()[0]
+        cursor.close()
+
+        return total

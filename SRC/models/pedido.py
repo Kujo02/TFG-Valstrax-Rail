@@ -227,3 +227,20 @@ class Pedido:
 
         mysql.connection.commit()
         cursor.close()
+
+
+
+    @classmethod
+    def count_pendientes(cls):
+        cursor = mysql.connection.cursor()
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM pedidos
+            WHERE estado_pedido = 'pendiente'
+        """)
+
+        total = cursor.fetchone()[0]
+        cursor.close()
+
+        return total

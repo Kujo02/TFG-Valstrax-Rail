@@ -147,3 +147,19 @@ class Tren:
             ))
 
         return trenes
+    
+
+    @classmethod
+    def count_activos(cls):
+        cursor = mysql.connection.cursor()
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM trenes
+            WHERE estado_tren = 'activo'
+        """)
+
+        total = cursor.fetchone()[0]
+        cursor.close()
+
+        return total

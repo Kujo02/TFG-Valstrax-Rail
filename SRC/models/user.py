@@ -164,3 +164,19 @@ class User(UserMixin):
 
         mysql.connection.commit()
         cursor.close()
+
+
+
+    @classmethod
+    def count_all(cls):
+        cursor = mysql.connection.cursor()
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM users
+        """)
+
+        total = cursor.fetchone()[0]
+        cursor.close()
+
+        return total
