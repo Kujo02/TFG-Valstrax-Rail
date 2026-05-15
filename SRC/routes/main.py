@@ -84,6 +84,10 @@ def reservar_viaje(viaje_id):
         flash('Este viaje no está disponible para reservas.', 'danger')
         return redirect(url_for('main.reservar'))
 
+    capacidad_total = Viaje.get_capacidad_total(viaje_id)
+    espacio_reservado = Viaje.get_espacio_reservado(viaje_id)
+    espacio_disponible = Viaje.get_espacio_disponible(viaje_id)
+
     form = PedidoForm()
 
     if current_user.is_authenticated and request.method == 'GET':
@@ -95,6 +99,17 @@ def reservar_viaje(viaje_id):
         email_cliente = form.email_cliente.data
         descripcion = form.descripcion.data
         espacios_solicitados = form.espacios_solicitados.data
+
+        if espacios_solicitados > espacio_disponible:
+            flash('No hay suficiente espacio disponible para este viaje.', 'danger')
+            return render_template(
+                'reservar_viaje.html',
+                form=form,
+                viaje=viaje,
+                capacidad_total=capacidad_total,
+                espacio_reservado=espacio_reservado,
+                espacio_disponible=espacio_disponible
+            )
 
         user_id = current_user.id if current_user.is_authenticated else None
 
@@ -114,8 +129,14 @@ def reservar_viaje(viaje_id):
 
         return redirect(url_for('main.reservar'))
 
-    return render_template('reservar_viaje.html', form=form, viaje=viaje)
-
+    return render_template(
+        'reservar_viaje.html',
+        form=form,
+        viaje=viaje,
+        capacidad_total=capacidad_total,
+        espacio_reservado=espacio_reservado,
+        espacio_disponible=espacio_disponible
+    )
 
 
 

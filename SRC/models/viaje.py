@@ -191,3 +191,46 @@ class Viaje:
             ))
 
         return viajes
+    
+
+    @classmethod
+    def get_capacidad_total(cls, viaje_id):
+        cursor = mysql.connection.cursor()
+
+        cursor.execute("""
+            SELECT COALESCE(SUM(vg.capacidad_m2), 0)
+            FROM viajes vi
+            JOIN vagones vg ON vi.tren_id = vg.tren_id
+            WHERE vi.id = %s
+            AND vg.estado_vagon = 'activo'
+        """, (viaje_id,))
+
+        capacidad = cursor.fetchone()[0]
+        cursor.close()
+
+        return capacidad
+    
+
+    @classmethod
+    def get_espacio_reservado(cls, viaje_id):
+        cursor = mysql.connection.cursor()
+
+        cursor.execute("""
+            SELECT COALESCE(SUM(espacios_solicitados), 0)
+            FROM pedidos
+            WHERE viaje_id = %s
+            AND estado_pedido IN ('pendiente', 'aceptado', 'en_transito')
+        """, (viaje_id,))
+
+        reservado = cursor.fetchone()[0]
+        cursor.close()
+
+        return reservado
+
+
+    @classmethod
+    def get_espacio_disponible(cls, viaje_id):
+        capacidad_total = cls.get_capacidad_total(viaje_id)
+        espacio_reservado = cls.get_espacio_reservado(viaje_id)
+
+        return capacidad_total - espacio_reservado

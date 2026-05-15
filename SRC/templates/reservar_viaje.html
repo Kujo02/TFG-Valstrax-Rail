@@ -67,6 +67,44 @@
                             </span>
                         </div>
 
+                        <div class="border-t border-gray-200 pt-5 space-y-4">
+
+                        <div>
+                            <p class="text-gray-500 text-sm font-semibold">
+                                Capacidad total
+                            </p>
+                            <p class="text-gray-900 font-bold">
+                                {{ capacidad_total }} m²
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-gray-500 text-sm font-semibold">
+                                Espacio reservado
+                            </p>
+                            <p class="text-gray-900 font-bold">
+                                {{ espacio_reservado }} m²
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-gray-500 text-sm font-semibold">
+                                Espacio disponible
+                            </p>
+
+                            {% if espacio_disponible > 0 %}
+                                <p class="text-green-700 font-extrabold text-xl">
+                                    {{ espacio_disponible }} m²
+                                </p>
+                            {% else %}
+                                <p class="text-red-700 font-extrabold text-xl">
+                                    Sin espacio disponible
+                                </p>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
                         <div class="pt-3">
                             <a href="{{ url_for('main.reservar') }}"
                                class="block text-center bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-lg transition">
