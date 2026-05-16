@@ -6,7 +6,8 @@ from models.tren import Tren
 from models.vagon import Vagon
 from models.viaje import Viaje
 from models.pedido import Pedido
-from forms import TrenForm, VagonForm, ViajeForm
+from models.estacion import Estacion
+from forms import TrenForm, VagonForm, ViajeForm, EstacionForm 
 
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
@@ -126,10 +127,18 @@ def toggle_tren_estado(tren_id):
 def create_tren():
     form = TrenForm()
 
+    estaciones_activas = Estacion.get_activas()
+
+    form.estacion_actual_id.choices = [
+        (estacion.id, f'{estacion.nombre} - {estacion.ciudad}')
+        for estacion in estaciones_activas
+    ]
+
     if form.validate_on_submit():
         nombre = form.nombre.data
         codigo = form.codigo.data
         estado_tren = form.estado_tren.data
+        estacion_actual_id = form.estacion_actual_id.data
 
         tren_existe = Tren.get_by_codigo(codigo)
 
@@ -137,13 +146,12 @@ def create_tren():
             flash('Ya existe un tren con ese código.', 'danger')
             return render_template('admin/tren_insert.html', form=form, title='Nuevo tren')
 
-        Tren.create(nombre, codigo, estado_tren)
+        Tren.create(nombre, codigo, estado_tren, estacion_actual_id)
 
         flash('Tren creado correctamente.', 'success')
         return redirect(url_for('admin.trenes'))
 
     return render_template('admin/tren_insert.html', form=form, title='Nuevo tren')
-
 
 
 
@@ -159,24 +167,52 @@ def edit_tren(tren_id):
 
     form = TrenForm(obj=tren)
 
+    estaciones_activas = Estacion.get_activas()
+
+    choices = [
+        (estacion.id, f'{estacion.nombre} - {estacion.ciudad}')
+        for estacion in estaciones_activas
+    ]
+
+    # Por si el tren tiene una estación inactiva asignada, la mantenemos en el select
+    if tren.estacion_actual_id and tren.estacion_actual_id not in [estacion.id for estacion in estaciones_activas]:
+        choices.append(
+            (
+                tren.estacion_actual_id,
+                f'{tren.estacion_actual_nombre} - {tren.estacion_actual_ciudad}'
+            )
+        )
+
+    form.estacion_actual_id.choices = choices
+
     if form.validate_on_submit():
         nombre = form.nombre.data
         codigo = form.codigo.data
         estado_tren = form.estado_tren.data
+        estacion_actual_id = form.estacion_actual_id.data
 
         tren_existe = Tren.get_by_codigo(codigo)
 
         if tren_existe and tren_existe.id != tren.id:
             flash('Ya existe otro tren con ese código.', 'danger')
-            return render_template('admin/tren_edit.html', form=form, tren=tren, title='Editar tren')
+            return render_template(
+                'admin/tren_edit.html',
+                form=form,
+                tren=tren,
+                title='Editar tren'
+            )
 
-        Tren.update(tren_id, nombre, codigo, estado_tren)
+        Tren.update(tren_id, nombre, codigo, estado_tren, estacion_actual_id)
 
         flash('Tren actualizado correctamente.', 'success')
         return redirect(url_for('admin.trenes'))
 
-    return render_template('admin/tren_edit.html', form=form, tren=tren, title='Editar tren')
-
+    return render_template(
+        'admin/tren_edit.html',
+        form=form,
+        tren=tren,
+        title='Editar tren'
+    )
 
 
 
@@ -443,3 +479,96 @@ def update_estado_pedido(pedido_id):
 
     flash('Estado del pedido actualizado correctamente.', 'success')
     return redirect(url_for('admin.pedidos'))
+
+
+
+@admin.route('/estaciones')
+@login_required
+@admin_required
+def estaciones():
+    estaciones = Estacion.get_all()
+    return render_template('admin/estaciones.html', estaciones=estaciones)
+
+
+@admin.route('/estaciones/create', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def create_estacion():
+    form = EstacionForm()
+
+    if form.validate_on_submit():
+        nombre = form.nombre.data
+        ciudad = form.ciudad.data
+        codigo = form.codigo.data
+        estado_estacion = form.estado_estacion.data
+
+        estacion_existe = Estacion.get_by_codigo(codigo)
+
+        if estacion_existe:
+            flash('Ya existe una estación con ese código.', 'danger')
+            return render_template('admin/estacion_insert.html', form=form, title='Nueva estación')
+
+        Estacion.create(nombre, ciudad, codigo, estado_estacion)
+
+        flash('Estación creada correctamente.', 'success')
+        return redirect(url_for('admin.estaciones'))
+
+    return render_template('admin/estacion_insert.html', form=form, title='Nueva estación')
+
+
+@admin.route('/estaciones/<int:estacion_id>/edit', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_estacion(estacion_id):
+    estacion = Estacion.get_by_id(estacion_id)
+
+    if not estacion:
+        flash('La estación no existe.', 'danger')
+        return redirect(url_for('admin.estaciones'))
+
+    form = EstacionForm(obj=estacion)
+
+    if form.validate_on_submit():
+        nombre = form.nombre.data
+        ciudad = form.ciudad.data
+        codigo = form.codigo.data
+        estado_estacion = form.estado_estacion.data
+
+        estacion_existe = Estacion.get_by_codigo(codigo)
+
+        if estacion_existe and estacion_existe.id != estacion.id:
+            flash('Ya existe otra estación con ese código.', 'danger')
+            return render_template(
+                'admin/estacion_edit.html',
+                form=form,
+                estacion=estacion,
+                title='Editar estación'
+            )
+
+        Estacion.update(estacion_id, nombre, ciudad, codigo, estado_estacion)
+
+        flash('Estación actualizada correctamente.', 'success')
+        return redirect(url_for('admin.estaciones'))
+
+    return render_template(
+        'admin/estacion_edit.html',
+        form=form,
+        estacion=estacion,
+        title='Editar estación'
+    )
+
+
+@admin.route('/estaciones/<int:estacion_id>/toggle_estado', methods=['POST'])
+@login_required
+@admin_required
+def toggle_estacion_estado(estacion_id):
+    estacion = Estacion.get_by_id(estacion_id)
+
+    if not estacion:
+        flash('La estación no existe.', 'danger')
+        return redirect(url_for('admin.estaciones'))
+
+    Estacion.toggle_estado(estacion_id)
+
+    flash('Estado de la estación actualizado correctamente.', 'success')
+    return redirect(url_for('admin.estaciones'))

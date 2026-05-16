@@ -38,9 +38,10 @@
             <table class="w-full text-left datatable">
                 <thead class="bg-orange-500 text-white uppercase text-sm">
                     <tr>
-                        <th class="px-6 py-4">ID</th>
+                        <!-- <th class="px-6 py-4">ID</th> -->
                         <th class="px-6 py-4">Nombre</th>
-                        <th class="px-6 py-4">Código</th>
+                        <!-- <th class="px-6 py-4">Código</th> -->
+                        <th class="px-6 py-4">Estación actual</th>
                         <th class="px-6 py-4">Estado</th>
                         <th class="px-6 py-4">Creado</th>
                         <th class="px-6 py-4">Actualizado</th>
@@ -53,17 +54,38 @@
                 <tbody>
                     {% for tren in trenes %}
                         <tr class="border-b border-orange-800 hover:bg-gray-900 transition">
-                            <td class="px-6 py-4">
+                            <!-- <td class="px-6 py-4">
                                 {{ tren.id }}
-                            </td>
+                            </td> -->
 
                             <td class="px-6 py-4 font-semibold">
-                                {{ tren.nombre }}
+                                <p class="font-semibold text-white">
+                                    {{ tren.nombre }}
+                                </p>
+                                <p class="text-gray-400 text-xs mt-1">
+                                    {{ tren.codigo }}
+                                </p>
                             </td>
 
-                            <td class="px-6 py-4 text-gray-300">
+                            <!-- <td class="px-6 py-4 text-gray-300">
                                 {{ tren.codigo }}
-                            </td>
+                            </td> -->
+                            <td class="px-6 py-4">
+                            {% if tren.estacion_actual_nombre %}
+                                <div>
+                                    <p class="text-white font-semibold">
+                                        {{ tren.estacion_actual_nombre }}
+                                    </p>
+                                    <p class="text-gray-400 text-xs">
+                                        {{ tren.estacion_actual_ciudad }}
+                                    </p>
+                                </div>
+                            {% else %}
+                                <span class="text-gray-500 font-semibold">
+                                    Sin asignar
+                                </span>
+                            {% endif %}
+                        </td>
 
                             <td class="px-6 py-4">
                                 {% if tren.estado_tren == "activo" %}
@@ -122,7 +144,7 @@
                         </tr>
                     {% else %}
                         <tr>
-                            <td colspan="8" class="px-6 py-6 text-center text-gray-400">
+                            <td colspan="9" class="px-6 py-6 text-center text-gray-400">
                                 No hay trenes registrados.
                             </td>
                         </tr>

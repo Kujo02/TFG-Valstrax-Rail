@@ -32,21 +32,32 @@ class LoginForm(FlaskForm):
 # FORMULARIO TRENES
 
 class TrenForm(FlaskForm):
-    nombre = StringField('Nombre',validators=[DataRequired(message='El nombre es obligatorio.'),
-            Length(min=3, max=100, message='El nombre debe tener entre 3 y 100 caracteres.')
+    nombre = StringField('Nombre',validators=[DataRequired(message='El nombre del tren es obligatorio.'),
+            Length(min=2, max=100, message='El nombre debe tener entre 2 y 100 caracteres.')
         ]
     )
 
-    codigo = StringField('Código',validators=[ DataRequired(message='El código es obligatorio.'),
-            Length(min=3, max=50, message='El código debe tener entre 3 y 50 caracteres.')
+    codigo = StringField('Código',validators=[DataRequired(message='El código del tren es obligatorio.'),
+            Length(min=2, max=50, message='El código debe tener entre 2 y 50 caracteres.')
         ]
     )
 
-    estado_tren = SelectField('Estado',choices=[('activo', 'Activo'),('inactivo', 'Inactivo')],
-        validators=[DataRequired(message='El estado es obligatorio.')]
+    estado_tren = SelectField('Estado',choices=[('activo', 'Activo'),('inactivo', 'Inactivo')
+        ],
+        validators=[
+            DataRequired(message='El estado del tren es obligatorio.')
+        ]
+    )
+
+    estacion_actual_id = SelectField('Estación actual',coerce=int,
+        validators=[
+            DataRequired(message='Debes seleccionar una estación actual.')
+        ]
     )
 
     submit = SubmitField('Guardar')
+
+# FORMULARIO VAGONES
 
 
 class VagonForm(FlaskForm):
@@ -139,3 +150,31 @@ class PedidoForm(FlaskForm):
     )
 
     submit = SubmitField('Reservar')
+
+
+# FORMULARIO ESTACIONES
+
+class EstacionForm(FlaskForm):
+    nombre = StringField('Nombre',validators=[DataRequired(message='El nombre de la estación es obligatorio.'),
+            Length(min=2, max=100, message='El nombre debe tener entre 2 y 100 caracteres.')
+        ]
+    )
+
+    ciudad = StringField('Ciudad',validators=[DataRequired(message='La ciudad es obligatoria.'),
+            Length(min=2, max=100, message='La ciudad debe tener entre 2 y 100 caracteres.')
+        ]
+    )
+
+    codigo = StringField('Código',validators=[DataRequired(message='El código de la estación es obligatorio.'),
+            Length(min=2, max=20, message='El código debe tener entre 2 y 20 caracteres.')
+        ]
+    )
+
+    estado_estacion = SelectField('Estado',choices=[('activa', 'Activa'),('inactiva', 'Inactiva')
+        ],
+        validators=[
+            DataRequired(message='El estado de la estación es obligatorio.')
+        ]
+    )
+
+    submit = SubmitField('Guardar')
