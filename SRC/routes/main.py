@@ -18,7 +18,7 @@ def index():
         else:
             return redirect(url_for('main.home'))
 
-    return redirect(url_for('main.home'))
+    return redirect(url_for('main.home')) #TODO cambiar a render 
 
 
 @main.route('/home')
@@ -66,6 +66,7 @@ def profile():
 
 @main.route('/reservar')
 def reservar():
+    Viaje.actualizar_estados_automaticos()
     viajes = Viaje.get_disponibles()
     return render_template('reservar.html', viajes=viajes)
 
@@ -74,6 +75,7 @@ def reservar():
 
 @main.route('/reservar/<int:viaje_id>', methods=['GET', 'POST'])
 def reservar_viaje(viaje_id):
+    Viaje.actualizar_estados_automaticos()
     viaje = Viaje.get_by_id(viaje_id)
 
     if not viaje:

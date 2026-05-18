@@ -2,9 +2,26 @@ from DB.db import mysql
 
 
 class Pedido:
-    def __init__(self,id=None,user_id=None,viaje_id=None,nombre_cliente=None,email_cliente=None,descripcion=None,
-                espacios_solicitados=None,estado_pedido=None,created_at=None,updated_at=None,user_nombre=None,
-                user_email=None,origen=None,destino=None,fecha_salida=None,fecha_llegada=None,tren_nombre=None,tren_codigo=None
+    def __init__(
+        self,
+        id=None,
+        user_id=None,
+        viaje_id=None,
+        nombre_cliente=None,
+        email_cliente=None,
+        descripcion=None,
+        espacios_solicitados=None,
+        estado_pedido=None,
+        created_at=None,
+        updated_at=None,
+        user_nombre=None,
+        user_email=None,
+        origen=None,
+        destino=None,
+        fecha_salida=None,
+        fecha_llegada=None,
+        tren_nombre=None,
+        tren_codigo=None
     ):
         self.id = id
         self.user_id = user_id
@@ -59,8 +76,8 @@ class Pedido:
                 p.updated_at,
                 u.name,
                 u.email,
-                v.origen,
-                v.destino,
+                eo.nombre AS origen,
+                ed.nombre AS destino,
                 v.fecha_salida,
                 v.fecha_llegada,
                 t.nombre,
@@ -68,6 +85,8 @@ class Pedido:
             FROM pedidos p
             LEFT JOIN users u ON p.user_id = u.id
             JOIN viajes v ON p.viaje_id = v.id
+            LEFT JOIN estaciones eo ON v.origen_id = eo.id
+            LEFT JOIN estaciones ed ON v.destino_id = ed.id
             JOIN trenes t ON v.tren_id = t.id
             ORDER BY p.created_at DESC
         """)
@@ -117,14 +136,16 @@ class Pedido:
                 p.estado_pedido,
                 p.created_at,
                 p.updated_at,
-                v.origen,
-                v.destino,
+                eo.nombre AS origen,
+                ed.nombre AS destino,
                 v.fecha_salida,
                 v.fecha_llegada,
                 t.nombre,
                 t.codigo
             FROM pedidos p
             JOIN viajes v ON p.viaje_id = v.id
+            LEFT JOIN estaciones eo ON v.origen_id = eo.id
+            LEFT JOIN estaciones ed ON v.destino_id = ed.id
             JOIN trenes t ON v.tren_id = t.id
             WHERE p.user_id = %s
             ORDER BY p.created_at DESC
@@ -175,8 +196,8 @@ class Pedido:
                 p.updated_at,
                 u.name,
                 u.email,
-                v.origen,
-                v.destino,
+                eo.nombre AS origen,
+                ed.nombre AS destino,
                 v.fecha_salida,
                 v.fecha_llegada,
                 t.nombre,
@@ -184,6 +205,8 @@ class Pedido:
             FROM pedidos p
             LEFT JOIN users u ON p.user_id = u.id
             JOIN viajes v ON p.viaje_id = v.id
+            LEFT JOIN estaciones eo ON v.origen_id = eo.id
+            LEFT JOIN estaciones ed ON v.destino_id = ed.id
             JOIN trenes t ON v.tren_id = t.id
             WHERE p.id = %s
         """, (pedido_id,))
@@ -227,8 +250,6 @@ class Pedido:
 
         mysql.connection.commit()
         cursor.close()
-
-
 
     @classmethod
     def count_pendientes(cls):

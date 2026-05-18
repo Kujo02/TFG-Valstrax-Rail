@@ -8,6 +8,7 @@ from models.viaje import Viaje
 from models.pedido import Pedido
 from models.estacion import Estacion
 from forms import TrenForm, VagonForm, ViajeForm, EstacionForm 
+from datetime import datetime, timedelta
 
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
@@ -53,7 +54,7 @@ def dashboard():
 def users():
     users = User.get_all()
 
-    return render_template('admin/users.html ', users=users)
+    return render_template('admin/users.html', users=users)
 
 
 
@@ -332,9 +333,9 @@ def toggle_vagon_estado(vagon_id):
 @login_required
 @admin_required
 def viajes():
+    Viaje.actualizar_estados_automaticos()
     viajes = Viaje.get_all()
     return render_template('admin/viajes.html', viajes=viajes)
-
 
 @admin.route('/viajes/create', methods=['GET', 'POST'])
 @login_required
@@ -343,18 +344,56 @@ def create_viaje():
     form = ViajeForm()
 
     trenes_activos = Tren.get_activos()
+    estaciones_activas = Estacion.get_activas()
+
     form.tren_id.choices = [
-        (tren.id, f'{tren.nombre} - {tren.codigo}')
-        for tren in trenes_activos
+    (
+        tren.id,
+        f'{tren.nombre} - {tren.codigo} | Estación: {tren.estacion_actual_nombre or "Sin asignar"}'
+    )
+    for tren in trenes_activos
+    ]
+
+    form.origen_id.choices = [
+        (estacion.id, estacion.nombre)
+        for estacion in estaciones_activas
+    ]
+
+    form.destino_id.choices = [
+        (estacion.id, estacion.nombre)
+        for estacion in estaciones_activas
     ]
 
     if form.validate_on_submit():
         tren_id = form.tren_id.data
-        origen = form.origen.data
-        destino = form.destino.data
+        origen_id = form.origen_id.data
+        destino_id = form.destino_id.data
         fecha_salida = form.fecha_salida.data
         fecha_llegada = form.fecha_llegada.data
         estado_viaje = form.estado_viaje.data
+
+        tren = Tren.get_by_id(tren_id)
+
+        ahora = datetime.now()
+
+
+        limite_maximo = ahora + timedelta(days=90)
+
+        if fecha_salida < ahora:
+            flash('No se puede crear un viaje con fecha de salida en el pasado.', 'danger')
+            return render_template('admin/viaje_insert.html', form=form, title='Nuevo viaje')
+
+        if fecha_salida > limite_maximo:
+            flash('No se puede crear un viaje con más de 3 meses de antelación.', 'danger')
+            return render_template('admin/viaje_insert.html', form=form, title='Nuevo viaje')
+
+        if tren.estacion_actual_id != origen_id:
+            flash('El tren seleccionado no se encuentra en la estación de origen.', 'danger')
+            return render_template('admin/viaje_insert.html', form=form, title='Nuevo viaje')
+
+        if origen_id == destino_id:
+            flash('La estación de origen y destino no pueden ser la misma.', 'danger')
+            return render_template('admin/viaje_insert.html', form=form, title='Nuevo viaje')
 
         if fecha_llegada and fecha_llegada <= fecha_salida:
             flash('La fecha de llegada debe ser posterior a la fecha de salida.', 'danger')
@@ -362,8 +401,8 @@ def create_viaje():
 
         Viaje.create(
             tren_id,
-            origen,
-            destino,
+            origen_id,
+            destino_id,
             fecha_salida,
             fecha_llegada,
             estado_viaje
@@ -373,7 +412,6 @@ def create_viaje():
         return redirect(url_for('admin.viajes'))
 
     return render_template('admin/viaje_insert.html', form=form, title='Nuevo viaje')
-
 
 @admin.route('/viajes/<int:viaje_id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -389,24 +427,62 @@ def edit_viaje(viaje_id):
 
     trenes_activos = Tren.get_activos()
     tren_actual = Tren.get_by_id(viaje.tren_id)
+    estaciones_activas = Estacion.get_activas()
 
     form.tren_id.choices = [
-        (tren.id, f'{tren.nombre} - {tren.codigo}')
-        for tren in trenes_activos
-    ]
+    (
+        tren.id,
+        f'{tren.nombre} - {tren.codigo} | Estación: {tren.estacion_actual_nombre or "Sin asignar"}'
+    )
+    for tren in trenes_activos
+
+]
 
     if tren_actual and tren_actual.id not in [tren.id for tren in trenes_activos]:
         form.tren_id.choices.append(
             (tren_actual.id, f'{tren_actual.nombre} - {tren_actual.codigo}')
         )
 
+    form.origen_id.choices = [
+        (estacion.id, estacion.nombre)
+        for estacion in estaciones_activas
+    ]
+
+    form.destino_id.choices = [
+        (estacion.id, estacion.nombre)
+        for estacion in estaciones_activas
+    ]
+
     if form.validate_on_submit():
         tren_id = form.tren_id.data
-        origen = form.origen.data
-        destino = form.destino.data
+        origen_id = form.origen_id.data
+        destino_id = form.destino_id.data
         fecha_salida = form.fecha_salida.data
         fecha_llegada = form.fecha_llegada.data
         estado_viaje = form.estado_viaje.data
+
+        tren = Tren.get_by_id(tren_id)
+
+        ahora = datetime.now()
+        limite_maximo = ahora + timedelta(days=90)
+
+        if estado_viaje == 'programado':
+
+            if fecha_salida < ahora:
+                flash('No se puede programar un viaje con fecha de salida en el pasado.', 'danger')
+                return render_template('admin/viaje_edit.html', form=form, viaje=viaje, title='Editar viaje')
+
+            if fecha_salida > limite_maximo:
+                flash('No se puede programar un viaje con más de 3 meses de antelación.', 'danger')
+                return render_template('admin/viaje_edit.html', form=form, viaje=viaje, title='Editar viaje')
+            
+        if tren.estacion_actual_id != origen_id:
+            flash('El tren seleccionado no se encuentra en la estación de origen.', 'danger')
+            return render_template('admin/viaje_insert.html', form=form, title='Nuevo viaje')
+
+        if origen_id == destino_id:
+            flash('La estación de origen y destino no pueden ser la misma.', 'danger')
+            return render_template('admin/viaje_edit.html', form=form, viaje=viaje, title='Editar viaje')
 
         if fecha_llegada and fecha_llegada <= fecha_salida:
             flash('La fecha de llegada debe ser posterior a la fecha de salida.', 'danger')
@@ -415,8 +491,8 @@ def edit_viaje(viaje_id):
         Viaje.update(
             viaje_id,
             tren_id,
-            origen,
-            destino,
+            origen_id,
+            destino_id,
             fecha_salida,
             fecha_llegada,
             estado_viaje
@@ -425,8 +501,12 @@ def edit_viaje(viaje_id):
         flash('Viaje actualizado correctamente.', 'success')
         return redirect(url_for('admin.viajes'))
 
-    return render_template('admin/viaje_edit.html', form=form, viaje=viaje, title='Editar viaje')
-
+    return render_template(
+        'admin/viaje_edit.html',
+        form=form,
+        viaje=viaje,
+        title='Editar viaje'
+    )
 
 @admin.route('/viajes/<int:viaje_id>/estado', methods=['POST'])
 @login_required

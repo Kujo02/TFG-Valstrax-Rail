@@ -64,28 +64,28 @@
                     {% endfor %}
                 </div>
 
-                <!-- Origen -->
+                <!-- Estación de origen -->
                 <div class="flex flex-col">
-                    {{ form.origen.label(class="text-orange-400 font-bold mb-2") }}
+                    {{ form.origen_id.label(class="text-orange-400 font-bold mb-2") }}
 
-                    {{ form.origen(
+                    {{ form.origen_id(
                         class="bg-gray-900 border border-orange-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                     ) }}
 
-                    {% for error in form.origen.errors %}
+                    {% for error in form.origen_id.errors %}
                         <span class="text-red-400 text-sm mt-1">{{ error }}</span>
                     {% endfor %}
                 </div>
 
-                <!-- Destino -->
+                <!-- Estación de destino -->
                 <div class="flex flex-col">
-                    {{ form.destino.label(class="text-orange-400 font-bold mb-2") }}
+                    {{ form.destino_id.label(class="text-orange-400 font-bold mb-2") }}
 
-                    {{ form.destino(
+                    {{ form.destino_id(
                         class="bg-gray-900 border border-orange-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                     ) }}
 
-                    {% for error in form.destino.errors %}
+                    {% for error in form.destino_id.errors %}
                         <span class="text-red-400 text-sm mt-1">{{ error }}</span>
                     {% endfor %}
                 </div>
