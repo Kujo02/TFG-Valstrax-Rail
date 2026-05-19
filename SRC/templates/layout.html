@@ -394,79 +394,120 @@ table.dataTable tbody td {
 
 <body class="flex flex-col min-h-screen">
 
-    {% block header %}
-    <nav class="bg-gray-800 text-white">
-        <div class="flex items-center justify-between p-4">
+{% block header %}
+<nav class="bg-gray-800 text-white">
+    <div class="flex items-center justify-between p-4">
 
-            <!-- Logo + nombre -->
-            <div class="flex items-center space-x-2 ml-10">
-                <img class="h-14 w-auto" src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo">
-                <h1 class="text-3xl font-bold">Valstrax Rail</h1>
-            </div>
+        <!-- Logo + nombre clicable -->
+        <a href="{{ url_for('main.home') }}"
+           class="flex items-center space-x-2 ml-10 px-3 py-2 rounded-lg hover:bg-gray-700 transition">
 
-            <!-- Menú -->
-            <ul class="flex space-x-6 mr-5">
-                <li>
-                    <a href="{{ url_for('main.home') }}" class="hover:text-blue-300 transition">
-                        Inicio
-                    </a>
-                </li>
+            <img class="h-14 w-auto"
+                 src="{{ url_for('static', filename='img/logo.png') }}"
+                 alt="Logo">
 
-                <li>
-                    <a href="{{ url_for('main.reservar') }}" class="hover:text-blue-300 transition">
-                        Reservar
-                    </a>
-                </li>
+            <h1 class="text-3xl font-bold">
+                Valstrax Rail
+            </h1>
+        </a>
 
-                {% if current_user.is_authenticated %}
+        <!-- Menú -->
+        <ul class="flex items-center space-x-2 mr-5">
 
-                    {% if current_user.role == "admin" %}
-                        <li>
-                            <a href="{{ url_for('admin.dashboard') }}" class="hover:text-blue-300 transition">
-                                Panel admin
-                            </a>
-                        </li>
-                    {% endif %}
+            <li>
+                <a href="{{ url_for('main.reservar') }}"
+                   class="block px-4 py-2 rounded-lg transition
+                   {% if request.endpoint == 'main.reservar' or request.endpoint == 'main.reservar_viaje' %}
+                        bg-blue-700 text-white font-semibold
+                   {% else %}
+                        hover:bg-gray-700 hover:text-blue-300
+                   {% endif %}">
+                    Reservar
+                </a>
+            </li>
 
+            {% if current_user.is_authenticated %}
+
+                {% if current_user.role == "admin" %}
                     <li>
-                        <a href="{{ url_for('main.profile') }}" class="hover:text-blue-300 transition">
-                            Mi perfil
+                        <a href="{{ url_for('admin.dashboard') }}"
+                           class="block px-4 py-2 rounded-lg transition
+                           {% if request.endpoint and request.endpoint.startswith('admin.') %}
+                                bg-orange-500 text-white font-semibold
+                           {% else %}
+                                hover:bg-gray-700 hover:text-orange-300
+                           {% endif %}">
+                            Panel admin
                         </a>
                     </li>
-
-                    <li>
-                        <a href="{{ url_for('main.mis_pedidos') }}" class="hover:text-blue-300 transition">
-                            Mis pedidos
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{{ url_for('auth.logout') }}" class="hover:text-blue-300 transition">
-                            Cerrar sesión
-                        </a>
-                    </li>
-
-                {% else %}
-
-                    <li>
-                        <a href="{{ url_for('auth.login') }}" class="hover:text-blue-300 transition">
-                            Iniciar sesión
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{{ url_for('auth.register') }}" class="hover:text-blue-300 transition">
-                            Registrarse
-                        </a>
-                    </li>
-
                 {% endif %}
-            </ul>
 
-        </div>
-    </nav>
-    {% endblock %}
+                <li>
+                    <a href="{{ url_for('main.mis_pedidos') }}"
+                       class="block px-4 py-2 rounded-lg transition
+                       {% if request.endpoint == 'main.mis_pedidos' %}
+                            bg-blue-700 text-white font-semibold
+                       {% else %}
+                            hover:bg-gray-700 hover:text-blue-300
+                       {% endif %}">
+                        Mis pedidos
+                    </a>
+                </li>
 
+                <!-- Usuario logueado -->
+                <li>
+                    <a href="{{ url_for('main.profile') }}"
+                       class="flex items-center gap-2 px-3 py-2 rounded-lg transition
+                       {% if request.endpoint == 'main.profile' %}
+                            bg-blue-700 text-white
+                       {% else %}
+                            bg-gray-700 hover:bg-gray-600 text-white
+                       {% endif %}">
+
+                        <div class="w-8 h-8 rounded-full 
+                            {% if current_user.role == 'admin' %}
+                                bg-orange-500
+                            {% else %}
+                                bg-blue-700
+                            {% endif %}
+                            flex items-center justify-center text-white font-bold uppercase">
+                            {{ current_user.name[0] }}
+                        </div>
+
+                        <span class="font-semibold max-w-32 truncate">
+                            {{ current_user.name }}
+                        </span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ url_for('auth.logout') }}"
+                       class="block px-4 py-2 rounded-lg hover:bg-red-700 hover:text-white transition">
+                        Cerrar sesión
+                    </a>
+                </li>
+
+            {% else %}
+
+                <li>
+                    <a href="{{ url_for('auth.login') }}"
+                       class="block px-4 py-2 rounded-lg transition
+                       {% if request.endpoint == 'auth.login' %}
+                            bg-blue-700 text-white font-semibold
+                       {% else %}
+                            hover:bg-gray-700 hover:text-blue-300
+                       {% endif %}">
+                        Iniciar sesión
+                    </a>
+                </li>
+
+
+            {% endif %}
+        </ul>
+
+    </div>
+</nav>
+{% endblock %}
     <!-- Mensajes flash -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}

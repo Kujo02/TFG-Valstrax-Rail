@@ -28,5 +28,26 @@ def load_user(user_id):
     
     return User.get_by_id(user_id)
 
+
+@app.errorhandler(404)
+def pagina_no_encontrada(error):
+    return render_template('errors/404.html'), 404
+
+
+@app.errorhandler(403)
+def acceso_denegado(error):
+    return render_template('errors/403.html'), 403
+
+
+@app.errorhandler(500)
+def error_servidor(error):
+    return render_template('errors/500.html'), 500
+
+
+# @app.route('/probar-500')
+# def probar_500():
+#     raise Exception('Error de prueba 500')
+
+
 if __name__ == '__main__':
     app.run(debug=True)

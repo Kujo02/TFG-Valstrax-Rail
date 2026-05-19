@@ -1,0 +1,45 @@
+{% extends 'layout.html' %}
+
+{% block title %}Error interno{% endblock %}
+
+{% block content %}
+
+<section class="bg-gray-100 flex-1 flex items-center justify-center px-8 py-16">
+
+    <div class="max-w-3xl w-full bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden">
+
+        <div class="bg-blue-900 px-8 py-8 text-center text-white">
+            <p class="text-sm font-extrabold uppercase tracking-widest">
+                Valstrax Rail
+            </p>
+
+            <h1 class="text-7xl font-extrabold mt-3">
+                500
+            </h1>
+
+            <h2 class="text-3xl font-extrabold uppercase mt-3">
+                Error interno
+            </h2>
+        </div>
+
+        <div class="p-10 text-center">
+
+            <div class="w-20 h-20 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl font-extrabold">
+                !
+            </div>
+
+            <p class="text-gray-700 text-lg font-semibold">
+                Ha ocurrido un problema inesperado en el servidor.
+            </p>
+
+            <p class="text-gray-500 mt-3 max-w-xl mx-auto">
+                Inténtalo de nuevo más tarde. Si el problema continúa, contacta con el administrador del sistema.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

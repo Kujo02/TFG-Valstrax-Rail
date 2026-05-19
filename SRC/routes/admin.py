@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, abort
 from flask_login import login_required, current_user
 from functools import wraps
 from models.user import User
@@ -20,8 +20,7 @@ def admin_required(f):
         
 
         if current_user.role != "admin":
-            flash('No tienes permisos para acceder a esta página.', 'danger')
-            return redirect(url_for('main.home'))
+            abort(403)
 
         return f(*args, **kwargs)
 
@@ -478,7 +477,7 @@ def edit_viaje(viaje_id):
             
         if tren.estacion_actual_id != origen_id:
             flash('El tren seleccionado no se encuentra en la estación de origen.', 'danger')
-            return render_template('admin/viaje_insert.html', form=form, title='Nuevo viaje')
+            return render_template('admin/viaje_edit.html', form=form, title='Nuevo viaje')
 
         if origen_id == destino_id:
             flash('La estación de origen y destino no pueden ser la misma.', 'danger')

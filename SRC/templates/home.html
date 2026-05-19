@@ -1,16 +1,272 @@
 {% extends 'layout.html' %}
 
-{% block title %}Home{% endblock %}
-
+{% block title %}Inicio{% endblock %}
 
 {% block content %}
-<div>
-    <h1>HOME</h1>
-</div>
 
-{% if current_user.is_authenticated %}
-    <li>Hola, {{ current_user.name }}</li>
-    <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
-{% endif %}
+<section class="bg-gray-100 flex-1">
+
+    <!-- Hero -->
+    <div class="bg-blue-900 text-white">
+        <div class="max-w-7xl mx-auto px-8 py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+            <div>
+                <h1 class="text-5xl font-extrabold leading-tight uppercase">
+                    Transporte ferroviario de mercancías
+                    <span class="text-blue-300">simple y eficiente</span>
+                </h1>
+
+                <p class="text-blue-100 text-lg mt-6 max-w-xl">
+                    Reserva espacio en trenes de carga, consulta la capacidad disponible
+                    y realiza el seguimiento de tu pedido con cuenta o mediante código de reserva.
+                </p>
+
+                <div class="flex flex-wrap gap-4 mt-8">
+                    <a href="{{ url_for('main.reservar') }}"
+                       class="bg-white text-blue-900 hover:bg-blue-100 font-bold px-6 py-3 rounded-lg transition">
+                        Reservar espacio
+                    </a>
+
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('main.mis_pedidos') }}"
+                           class="border border-white text-white hover:bg-white hover:text-blue-900 font-bold px-6 py-3 rounded-lg transition">
+                            Mis pedidos
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}"
+                           class="border border-white text-white hover:bg-white hover:text-blue-900 font-bold px-6 py-3 rounded-lg transition">
+                            Iniciar sesión
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="bg-blue-800 border border-blue-700 rounded-2xl p-8 shadow-2xl">
+                <div class="bg-white rounded-xl p-6 text-gray-900">
+                    <p class="text-sm font-bold text-blue-700 uppercase">
+                        Reserva rápida
+                    </p>
+
+                    <h2 class="text-2xl font-extrabold text-blue-900 mt-2">
+                        Reserva con o sin cuenta
+                    </h2>
+
+                    <p class="text-gray-600 mt-3">
+                        Puedes reservar como usuario registrado o como invitado usando tu nombre y email.
+                        Después podrás consultar el estado del pedido mediante un código de seguimiento.
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6 text-center">
+                        <div class="bg-gray-100 rounded-lg p-3">
+                            <p class="text-xs text-gray-500 font-semibold">
+                                Capacidad
+                            </p>
+                            <p class="text-blue-900 font-extrabold">
+                                Visible
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-100 rounded-lg p-3">
+                            <p class="text-xs text-gray-500 font-semibold">
+                                Reserva
+                            </p>
+                            <p class="text-blue-900 font-extrabold">
+                                Email
+                            </p>
+                        </div>
+
+                        <div class="bg-green-100 rounded-lg p-3">
+                            <p class="text-xs text-green-700 font-semibold">
+                                Seguimiento
+                            </p>
+                            <p class="text-green-800 font-extrabold">
+                                Código
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Cómo funciona -->
+    <div class="max-w-7xl mx-auto px-8 py-16">
+
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-extrabold text-blue-900 uppercase">
+                ¿Cómo funciona?
+            </h2>
+            <p class="text-gray-600 mt-2">
+                Reserva espacio ferroviario en pocos pasos.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <div class="bg-white border border-gray-200 rounded-2xl shadow-lg p-8 text-center">
+                <div class="w-14 h-14 bg-blue-700 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+                    1
+                </div>
+
+                <h3 class="text-xl font-extrabold text-blue-900">
+                    Elige un viaje
+                </h3>
+
+                <p class="text-gray-600 mt-3">
+                    Consulta los viajes programados, revisa origen, destino, horario y capacidad disponible.
+                </p>
+            </div>
+
+            <div class="bg-white border border-gray-200 rounded-2xl shadow-lg p-8 text-center">
+                <div class="w-14 h-14 bg-blue-700 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+                    2
+                </div>
+
+                <h3 class="text-xl font-extrabold text-blue-900">
+                    Indica el espacio
+                </h3>
+
+                <p class="text-gray-600 mt-3">
+                    Introduce los metros cuadrados necesarios y completa la reserva con tu cuenta o con tu email.
+                </p>
+            </div>
+
+            <div class="bg-white border border-gray-200 rounded-2xl shadow-lg p-8 text-center">
+                <div class="w-14 h-14 bg-blue-700 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+                    3
+                </div>
+
+                <h3 class="text-xl font-extrabold text-blue-900">
+                    Sigue tu pedido
+                </h3>
+
+                <p class="text-gray-600 mt-3">
+                    Consulta el estado desde tu cuenta o usando el código de seguimiento enviado por email.
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Ventajas -->
+    <div class="bg-white border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-8 py-16">
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+
+                <div>
+                    <h2 class="text-3xl font-extrabold text-blue-900 uppercase">
+                        Una plataforma pensada para gestionar reservas ferroviarias
+                    </h2>
+
+                    <p class="text-gray-600 mt-4">
+                        Valstrax Rail centraliza la gestión de estaciones, trenes, vagones, viajes y pedidos,
+                        permitiendo controlar la capacidad disponible y el estado de cada reserva.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                    <div class="bg-gray-100 rounded-xl p-5">
+                        <h3 class="font-extrabold text-blue-900">
+                            Reservas sin cuenta
+                        </h3>
+                        <p class="text-gray-600 text-sm mt-2">
+                            Los clientes invitados pueden reservar usando nombre y email, sin registrarse.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-100 rounded-xl p-5">
+                        <h3 class="font-extrabold text-blue-900">
+                            Código de seguimiento
+                        </h3>
+                        <p class="text-gray-600 text-sm mt-2">
+                            Cada pedido puede consultarse mediante un código enviado al correo del cliente.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-100 rounded-xl p-5">
+                        <h3 class="font-extrabold text-blue-900">
+                            Capacidad visible
+                        </h3>
+                        <p class="text-gray-600 text-sm mt-2">
+                            Cada viaje muestra espacio total, reservado y disponible antes de reservar.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-100 rounded-xl p-5">
+                        <h3 class="font-extrabold text-blue-900">
+                            Seguimiento de pedidos
+                        </h3>
+                        <p class="text-gray-600 text-sm mt-2">
+                            Los usuarios registrados pueden consultar sus pedidos desde su perfil.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- CTA seguimiento -->
+    <div class="bg-gray-100 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-8 py-16">
+
+            <div class="bg-white border border-gray-200 rounded-2xl shadow-lg p-8 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+
+                <div>
+                    <h2 class="text-3xl font-extrabold text-blue-900 uppercase">
+                        Consulta tu reserva
+                    </h2>
+
+                    <p class="text-gray-600 mt-3">
+                        Si realizaste una reserva como invitado, introduce el código recibido por email
+                        para consultar el estado actualizado de tu pedido.
+                    </p>
+                </div>
+
+                <form method="GET" action="#" class="flex flex-col sm:flex-row gap-3">
+                    <input
+                        type="text"
+                        name="codigo"
+                        placeholder="Código de seguimiento"
+                        class="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-700"
+                    >
+
+                    <button
+                        type="submit"
+                        class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-6 py-3 rounded-lg transition">
+                        Consultar
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- CTA final -->
+    <div class="bg-blue-900 text-white">
+        <div class="max-w-7xl mx-auto px-8 py-12 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+                <h2 class="text-2xl font-extrabold uppercase">
+                    ¿Listo para reservar espacio?
+                </h2>
+                <p class="text-blue-100 mt-1">
+                    Consulta los viajes disponibles y crea tu pedido en unos minutos.
+                </p>
+            </div>
+
+            <a href="{{ url_for('main.reservar') }}"
+               class="bg-white text-blue-900 hover:bg-blue-100 font-bold px-6 py-3 rounded-lg transition">
+                Ver viajes disponibles
+            </a>
+        </div>
+    </div>
+
+</section>
 
 {% endblock %}
