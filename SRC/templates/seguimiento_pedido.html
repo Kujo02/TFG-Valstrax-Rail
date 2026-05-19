@@ -1,0 +1,201 @@
+{% extends 'layout.html' %}
+
+{% block title %}Seguimiento de pedido{% endblock %}
+
+{% block content %}
+
+<section class="bg-gray-100 flex-1 px-8 py-10">
+
+    <div class="max-w-5xl mx-auto">
+
+        <!-- Cabecera -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-extrabold text-blue-900 uppercase">
+                Seguimiento de pedido
+            </h1>
+
+            <p class="text-gray-600 text-sm mt-2">
+                Consulta el estado de tu reserva introduciendo el código de seguimiento y el email utilizado.
+            </p>
+        </div>
+
+        <!-- Formulario -->
+        <div class="bg-white border border-gray-200 rounded-2xl shadow-lg p-8 mb-8">
+
+            <form method="POST" action="{{ url_for('main.seguimiento_pedido') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div>
+                    <label for="codigo_seguimiento" class="block text-blue-900 font-bold mb-2">
+                        Código de seguimiento
+                    </label>
+
+                    <input
+                        type="text"
+                        id="codigo_seguimiento"
+                        name="codigo_seguimiento"
+                        placeholder="Ejemplo: VR-A7K92P"
+                        class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-700"
+                    >
+                </div>
+
+                <div>
+                    <label for="email_cliente" class="block text-blue-900 font-bold mb-2">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email_cliente"
+                        name="email_cliente"
+                        placeholder="tu@email.com"
+                        class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-700"
+                    >
+                </div>
+
+                <div>
+                    <button
+                        type="submit"
+                        class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold px-6 py-3 rounded-lg transition">
+                        Consultar pedido
+                    </button>
+                </div>
+            </form>
+
+        </div>
+
+        {% if pedido %}
+
+            <!-- Resultado -->
+            <div class="bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden">
+
+                <div class="bg-blue-900 text-white px-8 py-6">
+                    <p class="text-sm uppercase font-bold text-blue-200">
+                        Pedido encontrado
+                    </p>
+
+                    <h2 class="text-2xl font-extrabold mt-1">
+                        Pedido #{{ pedido.id }}
+                    </h2>
+                </div>
+
+                <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <div>
+                        <p class="text-gray-500 text-sm">Código de seguimiento</p>
+                        <p class="text-blue-900 font-extrabold">
+                            {{ pedido.codigo_seguimiento }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-gray-500 text-sm">Estado del pedido</p>
+
+                        {% if pedido.estado_pedido == "pendiente" %}
+                            <span class="inline-block bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-bold">
+                                Pendiente
+                            </span>
+                        {% elif pedido.estado_pedido == "aceptado" %}
+                            <span class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold">
+                                Aceptado
+                            </span>
+                        {% elif pedido.estado_pedido == "rechazado" %}
+                            <span class="inline-block bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-bold">
+                                Rechazado
+                            </span>
+                        {% elif pedido.estado_pedido == "en_transito" %}
+                            <span class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-bold">
+                                En tránsito
+                            </span>
+                        {% elif pedido.estado_pedido == "entregado" %}
+                            <span class="inline-block bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-bold">
+                                Entregado
+                            </span>
+                        {% elif pedido.estado_pedido == "cancelado" %}
+                            <span class="inline-block bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm font-bold">
+                                Cancelado
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <p class="text-gray-500 text-sm">Cliente</p>
+                        <p class="text-gray-900 font-semibold">
+                            {{ pedido.nombre_cliente }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-gray-500 text-sm">Email</p>
+                        <p class="text-gray-900 font-semibold">
+                            {{ pedido.email_cliente }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-gray-500 text-sm">Ruta</p>
+                        <p class="text-gray-900 font-semibold">
+                            {{ pedido.origen }} → {{ pedido.destino }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-gray-500 text-sm">Tren</p>
+                        <p class="text-gray-900 font-semibold">
+                            {{ pedido.tren_nombre }}
+                            <span class="text-gray-500 text-sm">
+                                {{ pedido.tren_codigo }}
+                            </span>
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-gray-500 text-sm">Fecha de salida</p>
+                        <p class="text-gray-900 font-semibold">
+                            {{ pedido.fecha_salida }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-gray-500 text-sm">Fecha de llegada</p>
+                        <p class="text-gray-900 font-semibold">
+                            {% if pedido.fecha_llegada %}
+                                {{ pedido.fecha_llegada }}
+                            {% else %}
+                                Sin definir
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-gray-500 text-sm">Espacio solicitado</p>
+                        <p class="text-gray-900 font-semibold">
+                            {{ pedido.espacios_solicitados }} m²
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-gray-500 text-sm">Fecha de solicitud</p>
+                        <p class="text-gray-900 font-semibold">
+                            {{ pedido.created_at }}
+                        </p>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <p class="text-gray-500 text-sm">Descripción</p>
+                        <p class="text-gray-900 font-semibold">
+                            {{ pedido.descripcion }}
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

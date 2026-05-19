@@ -1,27 +1,12 @@
+import secrets
+import string
 from DB.db import mysql
 
-
 class Pedido:
-    def __init__(
-        self,
-        id=None,
-        user_id=None,
-        viaje_id=None,
-        nombre_cliente=None,
-        email_cliente=None,
-        descripcion=None,
-        espacios_solicitados=None,
-        estado_pedido=None,
-        created_at=None,
-        updated_at=None,
-        user_nombre=None,
-        user_email=None,
-        origen=None,
-        destino=None,
-        fecha_salida=None,
-        fecha_llegada=None,
-        tren_nombre=None,
-        tren_codigo=None
+    def __init__(self,id=None,user_id=None,viaje_id=None,nombre_cliente=None,email_cliente=None,descripcion=None,
+        espacios_solicitados=None,estado_pedido=None,codigo_seguimiento=None,created_at=None,updated_at=None,
+        user_nombre=None,user_email=None,origen=None,destino=None,fecha_salida=None,fecha_llegada=None,
+        tren_nombre=None,tren_codigo=None
     ):
         self.id = id
         self.user_id = user_id
@@ -31,6 +16,7 @@ class Pedido:
         self.descripcion = descripcion
         self.espacios_solicitados = espacios_solicitados
         self.estado_pedido = estado_pedido
+        self.codigo_seguimiento = codigo_seguimiento
         self.created_at = created_at
         self.updated_at = updated_at
 
@@ -49,14 +35,27 @@ class Pedido:
     def create(cls, user_id, viaje_id, nombre_cliente, email_cliente, descripcion, espacios_solicitados):
         cursor = mysql.connection.cursor()
 
+        codigo_seguimiento = cls.generar_codigo_seguimiento()
+
         cursor.execute("""
             INSERT INTO pedidos 
-            (user_id, viaje_id, nombre_cliente, email_cliente, descripcion, espacios_solicitados)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """, (user_id, viaje_id, nombre_cliente, email_cliente, descripcion, espacios_solicitados))
+            (user_id, viaje_id, nombre_cliente, email_cliente, descripcion, espacios_solicitados, codigo_seguimiento)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (
+            user_id,
+            viaje_id,
+            nombre_cliente,
+            email_cliente,
+            descripcion,
+            espacios_solicitados,
+            codigo_seguimiento
+        ))
 
         mysql.connection.commit()
         cursor.close()
+
+        return codigo_seguimiento
+    
 
     @classmethod
     def get_all(cls):
@@ -265,3 +264,89 @@ class Pedido:
         cursor.close()
 
         return total
+    
+
+    @classmethod
+    def generar_codigo_seguimiento(cls):
+        caracteres = string.ascii_uppercase + string.digits
+
+        while True:
+            codigo = 'VR-' + ''.join(secrets.choice(caracteres) for _ in range(6))
+
+            cursor = mysql.connection.cursor()
+
+            cursor.execute("""
+                SELECT id
+                FROM pedidos
+                WHERE codigo_seguimiento = %s
+            """, (codigo,))
+
+            existe = cursor.fetchone()
+            cursor.close()
+
+            if not existe:
+                return codigo
+            
+
+    @classmethod
+    def get_by_codigo_email(cls, codigo_seguimiento, email_cliente):
+        cursor = mysql.connection.cursor()
+
+        cursor.execute("""
+            SELECT 
+                p.id,
+                p.user_id,
+                p.viaje_id,
+                p.nombre_cliente,
+                p.email_cliente,
+                p.descripcion,
+                p.espacios_solicitados,
+                p.estado_pedido,
+                p.codigo_seguimiento,
+                p.created_at,
+                p.updated_at,
+                u.name,
+                u.email,
+                eo.nombre AS origen,
+                ed.nombre AS destino,
+                v.fecha_salida,
+                v.fecha_llegada,
+                t.nombre,
+                t.codigo
+            FROM pedidos p
+            LEFT JOIN users u ON p.user_id = u.id
+            JOIN viajes v ON p.viaje_id = v.id
+            LEFT JOIN estaciones eo ON v.origen_id = eo.id
+            LEFT JOIN estaciones ed ON v.destino_id = ed.id
+            JOIN trenes t ON v.tren_id = t.id
+            WHERE p.codigo_seguimiento = %s
+            AND p.email_cliente = %s
+        """, (codigo_seguimiento, email_cliente))
+
+        row = cursor.fetchone()
+        cursor.close()
+
+        if row:
+            return cls(
+                id=row[0],
+                user_id=row[1],
+                viaje_id=row[2],
+                nombre_cliente=row[3],
+                email_cliente=row[4],
+                descripcion=row[5],
+                espacios_solicitados=row[6],
+                estado_pedido=row[7],
+                codigo_seguimiento=row[8],
+                created_at=row[9],
+                updated_at=row[10],
+                user_nombre=row[11],
+                user_email=row[12],
+                origen=row[13],
+                destino=row[14],
+                fecha_salida=row[15],
+                fecha_llegada=row[16],
+                tren_nombre=row[17],
+                tren_codigo=row[18]
+            )
+
+        return None

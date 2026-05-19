@@ -426,6 +426,18 @@ table.dataTable tbody td {
                 </a>
             </li>
 
+            <li>
+                <a href="{{ url_for('main.seguimiento_pedido') }}"
+                class="block px-4 py-2 rounded-lg transition
+                {% if request.endpoint == 'main.seguimiento_pedido' %}
+                        bg-blue-700 text-white font-semibold
+                {% else %}
+                        hover:bg-gray-700 hover:text-blue-300
+                {% endif %}">
+                    Seguimiento
+                </a>
+            </li>
+
             {% if current_user.is_authenticated %}
 
                 {% if current_user.role == "admin" %}

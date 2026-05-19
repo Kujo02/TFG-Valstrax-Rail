@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template,redirect, url_for, request, flash
 from flask_login import current_user,login_required
+from utils.email import enviar_correo_seguimiento
 from models.user import User
 from models.pedido import Pedido
 from models.viaje import Viaje   
@@ -115,7 +116,7 @@ def reservar_viaje(viaje_id):
 
         user_id = current_user.id if current_user.is_authenticated else None
 
-        Pedido.create(
+        codigo_seguimiento = Pedido.create(
             user_id,
             viaje_id,
             nombre_cliente,
@@ -124,7 +125,14 @@ def reservar_viaje(viaje_id):
             espacios_solicitados
         )
 
-        flash('Reserva creada correctamente. Queda pendiente de revisión.', 'success')
+        pedido = Pedido.get_by_codigo_email(codigo_seguimiento, email_cliente)
+
+        if  pedido:
+            
+            enviar_correo_seguimiento(pedido)
+
+
+        flash('Reserva creada correctamente. Hemos enviado el código de seguimiento a tu correo.', 'success')
 
         if current_user.is_authenticated:
             return redirect(url_for('main.mis_pedidos'))
@@ -147,3 +155,28 @@ def reservar_viaje(viaje_id):
 def mis_pedidos():
     pedidos = Pedido.get_by_user(current_user.id)
     return render_template('mis_pedidos.html', pedidos=pedidos)
+
+
+
+@main.route('/seguimiento', methods=['GET', 'POST'])
+def seguimiento_pedido():
+    pedido = None
+
+    if request.method == 'POST':
+        codigo_seguimiento = request.form.get('codigo_seguimiento')
+        email_cliente = request.form.get('email_cliente')
+
+        if not codigo_seguimiento or not email_cliente:
+            flash('Debes introducir el código de seguimiento y el email.', 'danger')
+            return render_template('seguimiento_pedido.html', pedido=pedido)
+
+        codigo_seguimiento = codigo_seguimiento.strip().upper()
+        email_cliente = email_cliente.strip().lower()
+
+        pedido = Pedido.get_by_codigo_email(codigo_seguimiento, email_cliente)
+
+        if not pedido:
+            flash('No se ha encontrado ningún pedido con esos datos.', 'danger')
+            return render_template('seguimiento_pedido.html', pedido=None)
+
+    return render_template('seguimiento_pedido.html', pedido=pedido)

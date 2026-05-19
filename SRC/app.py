@@ -8,12 +8,16 @@ from routes.auth import auth
 from routes.admin import admin
 from models.user import User
 from flask_wtf import CSRFProtect
+from extensions import mail
 
 app = Flask(__name__)
 
 app.config.from_object(config['development'])
 
+
+
 mysql.init_app(app)
+mail.init_app(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)

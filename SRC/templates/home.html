@@ -26,18 +26,6 @@
                        class="bg-white text-blue-900 hover:bg-blue-100 font-bold px-6 py-3 rounded-lg transition">
                         Reservar espacio
                     </a>
-
-                    {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('main.mis_pedidos') }}"
-                           class="border border-white text-white hover:bg-white hover:text-blue-900 font-bold px-6 py-3 rounded-lg transition">
-                            Mis pedidos
-                        </a>
-                    {% else %}
-                        <a href="{{ url_for('auth.login') }}"
-                           class="border border-white text-white hover:bg-white hover:text-blue-900 font-bold px-6 py-3 rounded-lg transition">
-                            Iniciar sesión
-                        </a>
-                    {% endif %}
                 </div>
             </div>
 
@@ -157,7 +145,7 @@
 
                 <div>
                     <h2 class="text-3xl font-extrabold text-blue-900 uppercase">
-                        Una plataforma pensada para gestionar reservas ferroviarias
+                        Gestión centralizada de reservas ferroviarias
                     </h2>
 
                     <p class="text-gray-600 mt-4">
@@ -211,59 +199,30 @@
         </div>
     </div>
 
-    <!-- CTA seguimiento -->
+    <!-- Seguimiento de reserva -->
     <div class="bg-gray-100 border-t border-gray-200">
         <div class="max-w-7xl mx-auto px-8 py-16">
 
-            <div class="bg-white border border-gray-200 rounded-2xl shadow-lg p-8 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div class="bg-white border border-gray-200 rounded-2xl shadow-lg p-8 flex flex-col lg:flex-row items-center justify-between gap-8">
 
                 <div>
                     <h2 class="text-3xl font-extrabold text-blue-900 uppercase">
                         Consulta tu reserva
                     </h2>
 
-                    <p class="text-gray-600 mt-3">
-                        Si realizaste una reserva como invitado, introduce el código recibido por email
-                        para consultar el estado actualizado de tu pedido.
+                    <p class="text-gray-600 mt-3 max-w-2xl">
+                        Si realizaste una reserva como invitado, puedes consultar su estado usando
+                        el código de seguimiento recibido junto a tu email.
                     </p>
                 </div>
 
-                <form method="GET" action="#" class="flex flex-col sm:flex-row gap-3">
-                    <input
-                        type="text"
-                        name="codigo"
-                        placeholder="Código de seguimiento"
-                        class="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-700"
-                    >
-
-                    <button
-                        type="submit"
-                        class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-6 py-3 rounded-lg transition">
-                        Consultar
-                    </button>
-                </form>
+                <a href="{{ url_for('main.seguimiento_pedido') }}"
+                   class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-6 py-3 rounded-lg transition whitespace-nowrap">
+                    Consultar pedido
+                </a>
 
             </div>
 
-        </div>
-    </div>
-
-    <!-- CTA final -->
-    <div class="bg-blue-900 text-white">
-        <div class="max-w-7xl mx-auto px-8 py-12 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-                <h2 class="text-2xl font-extrabold uppercase">
-                    ¿Listo para reservar espacio?
-                </h2>
-                <p class="text-blue-100 mt-1">
-                    Consulta los viajes disponibles y crea tu pedido en unos minutos.
-                </p>
-            </div>
-
-            <a href="{{ url_for('main.reservar') }}"
-               class="bg-white text-blue-900 hover:bg-blue-100 font-bold px-6 py-3 rounded-lg transition">
-                Ver viajes disponibles
-            </a>
         </div>
     </div>
 
