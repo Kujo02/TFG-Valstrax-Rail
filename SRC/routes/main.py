@@ -4,6 +4,7 @@ from utils.email import enviar_correo_seguimiento
 from models.user import User
 from models.pedido import Pedido
 from models.viaje import Viaje   
+from models.estacion import Estacion
 from forms import PedidoForm
 
 main = Blueprint('main', __name__)
@@ -65,11 +66,19 @@ def profile():
 
 
 
+
+
 @main.route('/reservar')
 def reservar():
     Viaje.actualizar_estados_automaticos()
-    viajes = Viaje.get_disponibles()
-    return render_template('reservar.html', viajes=viajes)
+
+    origen_id = request.args.get('origen_id', type=int)
+    destino_id = request.args.get('destino_id', type=int)
+
+    viajes = Viaje.get_disponibles(origen_id=origen_id, destino_id=destino_id)
+    estaciones = Estacion.get_all()
+
+    return render_template('reservar.html',viajes=viajes,estaciones=estaciones,origen_id=origen_id,destino_id=destino_id)
 
 
 
@@ -127,12 +136,19 @@ def reservar_viaje(viaje_id):
 
         pedido = Pedido.get_by_codigo_email(codigo_seguimiento, email_cliente)
 
-        if  pedido:
-            
-            enviar_correo_seguimiento(pedido)
+        try:
+            if pedido:
+                enviar_correo_seguimiento(pedido)
 
+            flash('Reserva creada correctamente. Hemos enviado el código de seguimiento a tu correo.', 'success')
 
-        flash('Reserva creada correctamente. Hemos enviado el código de seguimiento a tu correo.', 'success')
+        except Exception as e:
+            print("Error al enviar correo:", e)
+
+            flash(
+                'Reserva creada correctamente, pero no se pudo enviar el correo de seguimiento. Contacta con administración si necesitas el código.',
+                'warning'
+            )
 
         if current_user.is_authenticated:
             return redirect(url_for('main.mis_pedidos'))

@@ -38,6 +38,7 @@
             <table class="w-full text-left datatable">
                 <thead class="bg-orange-500 text-white uppercase text-sm">
                     <tr>
+                        <th class="dtr-control"></th>
                         <!-- <th class="px-6 py-4">ID</th> -->
                         <th class="px-6 py-4">Nombre</th>
                         <!-- <th class="px-6 py-4">Código</th> -->
@@ -54,6 +55,9 @@
                 <tbody>
                     {% for tren in trenes %}
                         <tr class="border-b border-orange-800 hover:bg-gray-900 transition">
+
+                            <td class="dtr-control"></td>
+
                             <!-- <td class="px-6 py-4">
                                 {{ tren.id }}
                             </td> -->
@@ -144,7 +148,7 @@
                         </tr>
                     {% else %}
                         <tr>
-                            <td colspan="9" class="px-6 py-6 text-center text-gray-400">
+                            <td colspan="10" class="px-6 py-6 text-center text-gray-400">
                                 No hay trenes registrados.
                             </td>
                         </tr>

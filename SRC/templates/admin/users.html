@@ -31,7 +31,8 @@
             <table class="w-full text-left datatable">
                 <thead class="bg-orange-500 text-white uppercase text-sm">
                     <tr>
-                        <th class="px-6 py-4">ID</th>
+                        <th class="dtr-control"></th>
+                        <!-- <th class="px-6 py-4">ID</th> -->
                         <th class="px-6 py-4">Nombre</th>
                         <th class="px-6 py-4">Email</th>
                         <th class="px-6 py-4">Rol</th>
@@ -44,9 +45,12 @@
                 <tbody>
                     {% for user in users %}
                         <tr class="border-b border-orange-800 hover:bg-gray-900 transition">
-                            <td class="px-6 py-4">
+
+                            <td class="dtr-control"></td>
+
+                            <!-- <td class="px-6 py-4">
                                 {{ user.id }}
-                            </td>
+                            </td> -->
 
                             <td class="px-6 py-4 font-semibold">
                                 {{ user.name }}

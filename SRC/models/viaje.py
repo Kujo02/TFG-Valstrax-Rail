@@ -150,30 +150,26 @@ class Viaje:
 
     @classmethod
     def update_estado(cls, viaje_id, estado_viaje):
+        if estado_viaje == 'finalizado':
+            Viaje.finalizar_viaje(viaje_id)
+            return
+
         cursor = mysql.connection.cursor()
 
         cursor.execute("""
-            UPDATE viajes
+            UPDATE viajes   
             SET estado_viaje = %s
             WHERE id = %s
         """, (estado_viaje, viaje_id))
-
-
-
-        if estado_viaje == 'finalizado':
-            Viaje.finalizar_viaje(viaje_id)
-
-        else:
-            Viaje.update_estado(viaje_id, estado_viaje)
 
         mysql.connection.commit()
         cursor.close()
 
     @classmethod
-    def get_disponibles(cls):
+    def get_disponibles(cls, origen_id=None, destino_id=None):
         cursor = mysql.connection.cursor()
 
-        cursor.execute("""
+        sql = """
             SELECT 
                 v.id,
                 v.tren_id,
@@ -187,14 +183,66 @@ class Viaje:
                 v.created_at,
                 v.updated_at,
                 t.nombre,
-                t.codigo
+                t.codigo,
+
+                COALESCE(capacidad.capacidad_total, 0) AS capacidad_total,
+                COALESCE(reservas.espacio_reservado, 0) AS espacio_reservado,
+
+                GREATEST(
+                    COALESCE(capacidad.capacidad_total, 0) - COALESCE(reservas.espacio_reservado, 0),
+                    0
+                ) AS espacio_disponible
+
             FROM viajes v
-            JOIN trenes t ON v.tren_id = t.id
-            LEFT JOIN estaciones eo ON v.origen_id = eo.id
-            LEFT JOIN estaciones ed ON v.destino_id = ed.id
+
+            JOIN trenes t 
+                ON v.tren_id = t.id
+
+            LEFT JOIN estaciones eo 
+                ON v.origen_id = eo.id
+
+            LEFT JOIN estaciones ed 
+                ON v.destino_id = ed.id
+
+            LEFT JOIN (
+                SELECT 
+                    tren_id,
+                    SUM(capacidad_m2) AS capacidad_total
+                FROM vagones
+                WHERE estado_vagon = 'activo'
+                GROUP BY tren_id
+            ) capacidad 
+                ON capacidad.tren_id = v.tren_id
+
+            LEFT JOIN (
+                SELECT 
+                    viaje_id,
+                    SUM(espacios_solicitados) AS espacio_reservado
+                FROM pedidos
+                WHERE estado_pedido IN ('pendiente', 'aceptado', 'en_transito')
+                GROUP BY viaje_id
+            ) reservas 
+                ON reservas.viaje_id = v.id
+
             WHERE v.estado_viaje = 'programado'
+        """
+
+        params = []
+
+        if origen_id:
+            sql += " AND v.origen_id = %s"
+            params.append(origen_id)
+
+        if destino_id:
+            sql += " AND v.destino_id = %s"
+            params.append(destino_id)
+
+        sql += """
+            HAVING espacio_disponible > 0
             ORDER BY v.fecha_salida ASC
-        """)
+        """
+
+        cursor.execute(sql, params)
 
         rows = cursor.fetchall()
         cursor.close()
@@ -218,14 +266,14 @@ class Viaje:
                 tren_codigo=row[12]
             )
 
-            viaje.capacidad_total = cls.get_capacidad_total(viaje.id)
-            viaje.espacio_reservado = cls.get_espacio_reservado(viaje.id)
-            viaje.espacio_disponible = cls.get_espacio_disponible(viaje.id)
+            viaje.capacidad_total = row[13]
+            viaje.espacio_reservado = row[14]
+            viaje.espacio_disponible = row[15]
 
             viajes.append(viaje)
 
         return viajes
-
+    
     @classmethod
     def get_capacidad_total(cls, viaje_id):
         cursor = mysql.connection.cursor()

@@ -71,6 +71,7 @@ class Pedido:
                 p.descripcion,
                 p.espacios_solicitados,
                 p.estado_pedido,
+                p.codigo_seguimiento,
                 p.created_at,
                 p.updated_at,
                 u.name,
@@ -105,16 +106,17 @@ class Pedido:
                 descripcion=row[5],
                 espacios_solicitados=row[6],
                 estado_pedido=row[7],
-                created_at=row[8],
-                updated_at=row[9],
-                user_nombre=row[10],
-                user_email=row[11],
-                origen=row[12],
-                destino=row[13],
-                fecha_salida=row[14],
-                fecha_llegada=row[15],
-                tren_nombre=row[16],
-                tren_codigo=row[17]
+                codigo_seguimiento=row[8],
+                created_at=row[9],
+                updated_at=row[10],
+                user_nombre=row[11],
+                user_email=row[12],
+                origen=row[13],
+                destino=row[14],
+                fecha_salida=row[15],
+                fecha_llegada=row[16],
+                tren_nombre=row[17],
+                tren_codigo=row[18]
             ))
 
         return pedidos

@@ -38,6 +38,7 @@
             <table class="datatable w-full text-left">
                 <thead class="bg-orange-500 text-white uppercase text-sm">
                     <tr>
+                        <th class="dtr-control"></th>
                         <th>Nombre</th>
                         <th>Ciudad</th>
                         <th>Código</th>
@@ -50,6 +51,8 @@
                 <tbody>
                     {% for estacion in estaciones %}
                         <tr class="border-b border-orange-800 hover:bg-gray-900 transition">
+                            
+                            <td class="dtr-control"></td>
 
                             <td class="font-semibold">
                                 {{ estacion.nombre }}
@@ -60,7 +63,7 @@
                             </td>
 
                             <td>
-                                <span class="bg-gray-800 border border-orange-700 text-white px-3 py-1 rounded-full text-sm font-bold">
+                                <span class="bg-gray-800 border border-orange-700 text-white px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">
                                     {{ estacion.codigo }}
                                 </span>
                             </td>
@@ -110,7 +113,7 @@
                         </tr>
                     {% else %}
                         <tr>
-                            <td colspan="6" class="px-6 py-6 text-center text-gray-400">
+                            <td colspan="7" class="px-6 py-6 text-center text-gray-400">
                                 No hay estaciones registradas.
                             </td>
                         </tr>

@@ -38,6 +38,7 @@
             <table class="datatable w-full text-left">
                 <thead class="bg-orange-500 text-white uppercase text-sm">
                     <tr>
+                        <th class="dtr-control"></th>
                         <th class="py-4">Tren</th>
                         <th class="py-4">Origen</th>
                         <th class="py-4">Destino</th>
@@ -51,6 +52,9 @@
                 <tbody>
                     {% for viaje in viajes %}
                         <tr class="border-b border-orange-800 hover:bg-gray-900 transition">
+                            
+                            <!-- Ver mas -->
+                            <td class="dtr-control"></td>
 
                             <!-- Tren -->
                             <td class="px-6 py-4">
@@ -138,7 +142,7 @@
 
                     {% else %}
                         <tr>
-                            <td colspan="7" class="px-6 py-6 text-center text-gray-400">
+                            <td colspan="8" class="px-6 py-6 text-center text-gray-400">
                                 No hay viajes registrados.
                             </td>
                         </tr>

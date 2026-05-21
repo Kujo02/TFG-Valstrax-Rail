@@ -9,6 +9,7 @@ from routes.admin import admin
 from models.user import User
 from flask_wtf import CSRFProtect
 from extensions import mail
+import time
 
 app = Flask(__name__)
 
@@ -51,6 +52,18 @@ def error_servidor(error):
 # @app.route('/probar-500')
 # def probar_500():
 #     raise Exception('Error de prueba 500')
+
+
+# @app.before_request
+# def start_timer():
+#     request.start_time = time.time()
+
+# @app.after_request
+# def add_response_time(response):
+#     if hasattr(request, "start_time"):
+#         elapsed = time.time() - request.start_time
+#         print(f"{request.path} cargó en {elapsed:.3f} segundos")
+#     return response
 
 
 if __name__ == '__main__':

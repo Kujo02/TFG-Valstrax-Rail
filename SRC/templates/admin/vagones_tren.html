@@ -73,6 +73,7 @@
             <table class="w-full text-left datatable">
                 <thead class="bg-orange-500 text-white uppercase text-sm">
                     <tr>
+                        <th class="dtr-control"></th>
                         <th class="px-6 py-4">ID</th>
                         <th class="px-6 py-4">Nombre</th>
                         <th class="px-6 py-4">Filas</th>
@@ -85,78 +86,74 @@
                 </thead>
 
                 <tbody>
-                    {% for vagon in vagones %}
-                        <tr class="border-b border-orange-800 hover:bg-gray-900 transition">
-                            <td class="px-6 py-4">
-                                {{ vagon.id }}
-                            </td>
+            {% for vagon in vagones %}
+                <tr class="border-b border-orange-800 hover:bg-gray-900 transition">
+                    <td class="dtr-control"></td>
 
-                            <td class="px-6 py-4 font-semibold">
-                                {{ vagon.nombre }}
-                            </td>
+                    <td class="px-6 py-4">
+                        {{ vagon.id }}
+                    </td>
 
-                            <td class="px-6 py-4">
-                                {{ vagon.filas }}
-                            </td>
+                    <td class="px-6 py-4 font-semibold">
+                        {{ vagon.nombre }}
+                    </td>
 
-                            <td class="px-6 py-4">
-                                {{ vagon.columnas }}
-                            </td>
+                    <td class="px-6 py-4">
+                        {{ vagon.filas }}
+                    </td>
 
-                            <td class="px-6 py-4">
-                                {{ vagon.capacidad_m2 }} m²
-                            </td>
+                    <td class="px-6 py-4">
+                        {{ vagon.columnas }}
+                    </td>
 
-                            <td class="px-6 py-4">
-                                {% if vagon.estado_vagon == "activo" %}
-                                    <div class="flex items-center gap-2">
-                                        <span class="w-3 h-3 bg-green-500 rounded-full"></span>
-                                        <span class="text-green-400 font-semibold">Activo</span>
-                                    </div>
+                    <td class="px-6 py-4">
+                        {{ vagon.capacidad_m2 }} m²
+                    </td>
+
+                    <td class="px-6 py-4">
+                        {% if vagon.estado_vagon == "activo" %}
+                            <div class="flex items-center justify-center gap-2">
+                                <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                                <span class="text-green-400 font-semibold">Activo</span>
+                            </div>
+                        {% else %}
+                            <div class="flex items-center justify-center gap-2">
+                                <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+                                <span class="text-red-400 font-semibold">Inactivo</span>
+                            </div>
+                        {% endif %}
+                    </td>
+
+                    <td class="px-6 py-4 text-center">
+                        <form method="POST" action="{{ url_for('admin.toggle_vagon_estado', vagon_id=vagon.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            <button type="submit"
+                                class="{% if vagon.estado_vagon == 'activo' %}
+                                    bg-red-600 hover:bg-red-700
                                 {% else %}
-                                    <div class="flex items-center gap-2">
-                                        <span class="w-3 h-3 bg-red-500 rounded-full"></span>
-                                        <span class="text-red-400 font-semibold">Inactivo</span>
-                                    </div>
+                                    bg-green-600 hover:bg-green-700
                                 {% endif %}
-                            </td>
+                                text-white px-3 py-1 rounded text-sm font-semibold transition whitespace-nowrap">
 
-                            <td class="px-6 py-4 text-center">
-                                <form method="POST" action="{{ url_for('admin.toggle_vagon_estado', vagon_id=vagon.id) }}">
-                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                {% if vagon.estado_vagon == "activo" %}
+                                    Desactivar
+                                {% else %}
+                                    Activar
+                                {% endif %}
+                            </button>
+                        </form>
+                    </td>
 
-                                    <button type="submit"
-                                        class="{% if vagon.estado_vagon == 'activo' %}
-                                            bg-red-600 hover:bg-red-700
-                                        {% else %}
-                                            bg-green-600 hover:bg-green-700
-                                        {% endif %}
-                                        text-white px-3 py-1 rounded text-sm font-semibold transition">
-
-                                        {% if vagon.estado_vagon == "activo" %}
-                                            Desactivar
-                                        {% else %}
-                                            Activar
-                                        {% endif %}
-                                    </button>
-                                </form>
-                            </td>
-
-                            <td class="px-6 py-4 text-center">
-                                <a href="{{ url_for('admin.edit_vagon', vagon_id=vagon.id) }}"
-                                   class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded text-sm font-semibold transition">
-                                    Editar
-                                </a>
-                            </td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="8" class="px-6 py-6 text-center text-gray-400">
-                                Este tren todavía no tiene vagones registrados.
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
+                    <td class="px-6 py-4 text-center">
+                        <a href="{{ url_for('admin.edit_vagon', vagon_id=vagon.id) }}"
+                        class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded text-sm font-semibold transition inline-block whitespace-nowrap">
+                            Editar
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
             </table>
 
         </div>

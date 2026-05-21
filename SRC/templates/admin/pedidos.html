@@ -31,12 +31,14 @@
             <table class="datatable w-full text-left">
                 <thead class="bg-orange-500 text-white uppercase text-sm">
                     <tr>
+                        <th class="dtr-control"></th>
                         <th>Cliente</th>
                         <th>Email</th>
                         <th>Viaje</th>
                         <th>Tren</th>
                         <th>Espacio</th>
                         <th>Estado</th>
+                        <th>Código</th>
                         <th>Fecha</th>
                     </tr>
                 </thead>
@@ -44,6 +46,9 @@
                 <tbody>
                     {% for pedido in pedidos %}
                         <tr class="border-b border-orange-800 hover:bg-gray-900 transition">
+
+                            <!-- Ver mas -->
+                            <td class="dtr-control"></td>
 
                             <!-- Cliente -->
                             <td>
@@ -151,6 +156,17 @@
                                 </form>
                             </td>
 
+                            <!-- Código de seguimiento-->
+                            <td>
+                                {% if pedido.codigo_seguimiento %}
+                                    <span class="bg-blue-900 text-blue-200 px-3 py-1 rounded-lg text-sm font-bold whitespace-nowrap">
+                                        {{ pedido.codigo_seguimiento }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-gray-500">Sin código</span>
+                                {% endif %}
+                            </td>
+
                             <!-- Fecha -->
                             <td class="text-gray-300 whitespace-nowrap">
                                 {{ pedido.created_at }}
@@ -159,7 +175,7 @@
                         </tr>
                     {% else %}
                         <tr>
-                            <td colspan="7" class="px-6 py-6 text-center text-gray-400">
+                            <td colspan="9" class="px-6 py-6 text-center text-gray-400">
                                 No hay pedidos registrados.
                             </td>
                         </tr>

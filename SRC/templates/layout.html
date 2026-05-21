@@ -389,6 +389,53 @@ table.dataTable tbody td {
     font-size: 1rem !important;
     vertical-align: middle !important;
 }
+
+/* ========================= */
+/* Botón responsive DataTables */
+/* ========================= */
+
+table.dataTable.dtr-column > tbody > tr > td.dtr-control::before,
+table.dataTable.dtr-column > tbody > tr > th.dtr-control::before,
+table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control::before,
+table.dataTable.dtr-inline.collapsed > tbody > tr > th.dtr-control::before {
+    content: "▶" !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    color: #f97316 !important;
+    border: none !important;
+    box-shadow: none !important;
+
+    font-size: 1rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+
+    display: inline-block !important;
+    transition: transform 0.2s ease-in-out !important;
+    transform: rotate(0deg) !important;
+}
+
+/* Cuando está desplegado */
+table.dataTable.dtr-column > tbody > tr.dtr-expanded > td.dtr-control::before,
+table.dataTable.dtr-column > tbody > tr.dtr-expanded > th.dtr-control::before,
+table.dataTable.dtr-inline.collapsed > tbody > tr.dtr-expanded > td.dtr-control::before,
+table.dataTable.dtr-inline.collapsed > tbody > tr.dtr-expanded > th.dtr-control::before,
+
+table.dataTable.dtr-column > tbody > tr.dt-hasChild > td.dtr-control::before,
+table.dataTable.dtr-column > tbody > tr.dt-hasChild > th.dtr-control::before,
+table.dataTable.dtr-inline.collapsed > tbody > tr.dt-hasChild > td.dtr-control::before,
+table.dataTable.dtr-inline.collapsed > tbody > tr.dt-hasChild > th.dtr-control::before,
+
+table.dataTable.dtr-column > tbody > tr.parent > td.dtr-control::before,
+table.dataTable.dtr-column > tbody > tr.parent > th.dtr-control::before,
+table.dataTable.dtr-inline.collapsed > tbody > tr.parent > td.dtr-control::before,
+table.dataTable.dtr-inline.collapsed > tbody > tr.parent > th.dtr-control::before {
+    content: "▶" !important;
+    transform: rotate(90deg) !important;
+    color: #f97316 !important;
+}   
+
+
 </style>
 </head>
 
@@ -590,26 +637,43 @@ table.dataTable tbody td {
     <!-- Activación de DataTables -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+
+            $.fn.dataTable.ext.pager.numbers_length = 1;
+
             $('.datatable').DataTable({
-                responsive: true,
+                responsive: {
+                    details: {
+                        type: 'column',
+                        target: 0
+                    }
+                },
+                columnDefs: [
+                    {
+                        className: 'dtr-control',
+                        orderable: false,
+                        targets: 0
+                    }
+                ],
                 pageLength: 5,
                 lengthMenu: [5, 10, 25, 50],
                 order: [],
+                
                 language: {
                     search: "Buscar:",
                     lengthMenu: "Mostrar _MENU_ registros",
                     info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
                     infoEmpty: "No hay registros disponibles",
+                    emptyTable: "No hay registros disponibles",
                     infoFiltered: "(filtrado de _MAX_ registros totales)",
                     zeroRecords: "No se encontraron resultados",
                     paginate: {
-                        first: "Primero",
-                        last: "Último",
-                        next: "Siguiente",
-                        previous: "Anterior"
+                        first: "<<",
+                        last: ">>",
+                        next: ">",
+                        previous: "<"
                     }
                 }
-            });
+    });
         });
     </script>
 
