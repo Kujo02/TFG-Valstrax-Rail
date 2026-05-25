@@ -15,7 +15,7 @@
                     Mis pedidos
                 </h1>
                 <p class="text-gray-600 mt-2">
-                    Consulta el estado de tus reservas y pedidos realizados.
+                    Consulta el estado de tus reservas, pedidos y pagos realizados.
                 </p>
             </div>
 
@@ -46,6 +46,7 @@
                         <!-- Contenido -->
                         <div class="p-6 space-y-4">
 
+                            <!-- Tren -->
                             <div>
                                 <p class="text-gray-500 text-sm font-semibold">
                                     Tren
@@ -58,6 +59,7 @@
                                 </p>
                             </div>
 
+                            <!-- Fechas -->
                             <div class="grid grid-cols-1 gap-3">
                                 <div>
                                     <p class="text-gray-500 text-sm font-semibold">
@@ -82,49 +84,122 @@
                                 </div>
                             </div>
 
-                            <div>
-                                <p class="text-gray-500 text-sm font-semibold">
-                                    Espacio solicitado
-                                </p>
-                                <p class="text-gray-900 font-bold">
-                                    {{ pedido.espacios_solicitados }} m²
-                                </p>
+                           <!-- Resumen del pedido -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-center">
+
+                                <!-- Espacio solicitado -->
+                                <div class="bg-gray-100 rounded-xl p-4 border border-gray-200">
+                                    <p class="text-gray-500 text-xs font-semibold uppercase">
+                                        Espacio
+                                    </p>
+
+                                    <p class="text-blue-900 text-2xl font-extrabold mt-1">
+                                        {{ pedido.espacios_solicitados }} m²
+                                    </p>
+                                </div>
+
+                                <!-- Estado del pedido -->
+                                <div class="bg-gray-100 rounded-xl p-4 border border-gray-200">
+                                    <p class="text-gray-500 text-xs font-semibold uppercase">
+                                        Estado
+                                    </p>
+
+                                    <div class="mt-2">
+                                        {% if pedido.estado_pedido == "pendiente" %}
+                                            <span class="inline-block bg-yellow-100 text-yellow-700 border border-yellow-300 px-3 py-1 rounded-full text-sm font-bold">
+                                                Pendiente
+                                            </span>
+                                        {% elif pedido.estado_pedido == "aceptado" %}
+                                            <span class="inline-block bg-green-100 text-green-700 border border-green-300 px-3 py-1 rounded-full text-sm font-bold">
+                                                Aceptado
+                                            </span>
+                                        {% elif pedido.estado_pedido == "rechazado" %}
+                                            <span class="inline-block bg-red-100 text-red-700 border border-red-300 px-3 py-1 rounded-full text-sm font-bold">
+                                                Rechazado
+                                            </span>
+                                        {% elif pedido.estado_pedido == "en_transito" %}
+                                            <span class="inline-block bg-blue-100 text-blue-700 border border-blue-300 px-3 py-1 rounded-full text-sm font-bold">
+                                                En tránsito
+                                            </span>
+                                        {% elif pedido.estado_pedido == "entregado" %}
+                                            <span class="inline-block bg-purple-100 text-purple-700 border border-purple-300 px-3 py-1 rounded-full text-sm font-bold">
+                                                Entregado
+                                            </span>
+                                        {% elif pedido.estado_pedido == "cancelado" %}
+                                            <span class="inline-block bg-gray-200 text-gray-700 border border-gray-300 px-3 py-1 rounded-full text-sm font-bold">
+                                                Cancelado
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
                             </div>
+                            <!-- Pago -->
+                            <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
 
-                            <div>
-                                <p class="text-gray-500 text-sm font-semibold">
-                                    Estado
-                                </p>
+                                <div class="flex items-center justify-between gap-3">
 
-                                {% if pedido.estado_pedido == "pendiente" %}
-                                    <span class="inline-block mt-1 bg-yellow-100 text-yellow-700 border border-yellow-300 px-3 py-1 rounded-full text-sm font-bold">
-                                        Pendiente
-                                    </span>
-                                {% elif pedido.estado_pedido == "aceptado" %}
-                                    <span class="inline-block mt-1 bg-green-100 text-green-700 border border-green-300 px-3 py-1 rounded-full text-sm font-bold">
-                                        Aceptado
-                                    </span>
-                                {% elif pedido.estado_pedido == "rechazado" %}
-                                    <span class="inline-block mt-1 bg-red-100 text-red-700 border border-red-300 px-3 py-1 rounded-full text-sm font-bold">
-                                        Rechazado
-                                    </span>
-                                {% elif pedido.estado_pedido == "en_transito" %}
-                                    <span class="inline-block mt-1 bg-blue-100 text-blue-700 border border-blue-300 px-3 py-1 rounded-full text-sm font-bold">
-                                        En tránsito
-                                    </span>
-                                {% elif pedido.estado_pedido == "entregado" %}
-                                    <span class="inline-block mt-1 bg-purple-100 text-purple-700 border border-purple-300 px-3 py-1 rounded-full text-sm font-bold">
-                                        Entregado
-                                    </span>
-                                {% elif pedido.estado_pedido == "cancelado" %}
-                                    <span class="inline-block mt-1 bg-gray-200 text-gray-700 border border-gray-300 px-3 py-1 rounded-full text-sm font-bold">
-                                        Cancelado
-                                    </span>
+                                    <div>
+                                        <p class="text-gray-500 text-sm font-semibold">
+                                            Estado del pago
+                                        </p>
+
+                                        {% if pedido.estado_pago == "pagado" %}
+                                            <span class="inline-block mt-1 bg-green-100 text-green-700 border border-green-300 px-3 py-1 rounded-full text-sm font-bold">
+                                                Pagado
+                                            </span>
+                                        {% elif pedido.estado_pago == "cancelado" %}
+                                            <span class="inline-block mt-1 bg-gray-200 text-gray-700 border border-gray-300 px-3 py-1 rounded-full text-sm font-bold">
+                                                Cancelado
+                                            </span>
+                                        {% elif pedido.estado_pago == "fallido" %}
+                                            <span class="inline-block mt-1 bg-red-100 text-red-700 border border-red-300 px-3 py-1 rounded-full text-sm font-bold">
+                                                Fallido
+                                            </span>
+                                        {% else %}
+                                            <span class="inline-block mt-1 bg-yellow-100 text-yellow-700 border border-yellow-300 px-3 py-1 rounded-full text-sm font-bold">
+                                                Pendiente de pago
+                                            </span>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="text-right">
+                                        <p class="text-gray-500 text-sm font-semibold">
+                                            Total
+                                        </p>
+                                        <p class="text-blue-900 text-xl font-extrabold">
+                                            {{ pedido.precio_total }} €
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                                {% if pedido.estado_pago == "pendiente" and pedido.estado_pedido == "aceptado" %}
+                                    <form method="POST"
+                                          action="{{ url_for('pagos.crear_checkout_session', pedido_id=pedido.id) }}"
+                                          class="mt-4 prevent-double-submit">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                                        <button type="submit"
+                                                class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 rounded-lg transition">
+                                            Pagar reserva
+                                        </button>
+                                    </form>
+
+                                {% elif pedido.estado_pago == "pagado" %}
+                                    <p class="text-green-700 text-sm font-semibold mt-3">
+                                        Esta reserva ya ha sido pagada correctamente.
+                                    </p>
+
+                                {% else %}
+                                    <p class="text-gray-500 text-sm font-semibold mt-3">
+                                        Este pedido no permite realizar el pago.
+                                    </p>
                                 {% endif %}
+
                             </div>
 
-                            
-
+                            <!-- Descripción -->
                             <div>
                                 <p class="text-gray-500 text-sm font-semibold">
                                     Descripción
@@ -134,6 +209,7 @@
                                 </p>
                             </div>
 
+                            <!-- Fecha -->
                             <div class="pt-3 border-t border-gray-200">
                                 <p class="text-gray-500 text-xs">
                                     Creado el {{ pedido.created_at }}

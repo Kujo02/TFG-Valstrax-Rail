@@ -6,10 +6,11 @@ from DB.db import mysql
 from routes.main import main
 from routes.auth import auth
 from routes.admin import admin
+from routes.pagos import pagos,stripe_webhook
 from models.user import User
 from flask_wtf import CSRFProtect
 from extensions import mail
-import time
+# import time
 
 app = Flask(__name__)
 
@@ -28,6 +29,13 @@ csrf = CSRFProtect(app)
 app.register_blueprint(main)
 app.register_blueprint(auth)    
 app.register_blueprint(admin)
+app.register_blueprint(pagos)
+
+
+# Stripe envía webhooks sin token CSRF, por eso se excluye solo esta ruta
+csrf.exempt(stripe_webhook)
+
+
 @login_manager.user_loader
 def load_user(user_id):
     

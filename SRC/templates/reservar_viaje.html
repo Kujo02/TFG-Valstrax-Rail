@@ -127,8 +127,10 @@
                         Datos de la reserva
                     </h2>
 
-                    <form method="POST" action="{{ url_for('main.reservar_viaje', viaje_id=viaje.id) }}" class="space-y-5">
+                    <form method="POST" action="{{ url_for('main.reservar_viaje', viaje_id=viaje.id) }}" class="space-y-5 prevent-double-submit">
                         {{ form.hidden_tag() }}
+
+                        <input type="hidden" name="reserva_token" value="{{ reserva_token }}">
 
                         <!-- Nombre -->
                         <div>
