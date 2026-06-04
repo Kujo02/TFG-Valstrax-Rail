@@ -13,7 +13,7 @@ pagos = Blueprint('pagos', __name__)
 @login_required
 def crear_checkout_session(pedido_id):
     stripe_secret_key = current_app.config.get("STRIPE_SECRET_KEY")
-    base_url = current_app.config.get("BASE_URL", "http://127.0.0.1:5000").rstrip("/")
+    base_url = current_app.config.get("BASE_URL").rstrip("/")
 
     if not stripe_secret_key:
         flash('No se ha configurado correctamente la clave de Stripe.', 'danger')
