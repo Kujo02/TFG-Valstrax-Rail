@@ -169,7 +169,7 @@
 
                             <!-- Fecha -->
                             <td class="text-gray-300 whitespace-nowrap">
-                                {{ pedido.created_at }}
+                                {{ pedido.created_at.strftime('%d/%m/%Y %H:%M:%S') }}
                             </td>
 
                         </tr>

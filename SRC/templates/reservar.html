@@ -95,7 +95,7 @@
                                     Salida
                                 </p>
                                 <p class="text-gray-900 font-bold">
-                                    {{ viaje.fecha_salida }}
+                                    {{ viaje.fecha_salida.strftime('%d/%m/%Y %H:%M:%S') }}
                                 </p>
                             </div>
 
@@ -105,7 +105,7 @@
                                 </p>
                                 <p class="text-gray-900 font-bold">
                                     {% if viaje.fecha_llegada %}
-                                        {{ viaje.fecha_llegada }}
+                                        {{ viaje.fecha_llegada.strftime('%d/%m/%Y %H:%M:%S') }}
                                     {% else %}
                                         Sin definir
                                     {% endif %}

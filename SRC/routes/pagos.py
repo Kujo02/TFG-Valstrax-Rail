@@ -1,6 +1,6 @@
 import stripe
 
-from flask import Blueprint, redirect, url_for, flash, request, jsonify, current_app
+from flask import Blueprint, redirect, url_for, flash, request, jsonify, current_app, session
 from flask_login import current_user, login_required
 
 from models.pedido import Pedido
@@ -44,7 +44,7 @@ def crear_checkout_session(pedido_id):
         return redirect(url_for('main.mis_pedidos'))
 
     try:
-        session = stripe.checkout.Session.create(
+        checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             mode='payment',
             customer_email=pedido.email_cliente,
@@ -75,7 +75,7 @@ def crear_checkout_session(pedido_id):
         print("Pedido ID:", pedido.id)
         print("Session ID:", session.id)
 
-        return redirect(session.url, code=303)
+        return redirect(checkout_session.url, code=303)
 
     except stripe.error.StripeError as e:
         print("Error de Stripe:", e)
@@ -87,19 +87,25 @@ def crear_checkout_session(pedido_id):
         flash('Ha ocurrido un error al preparar el pago.', 'danger')
         return redirect(url_for('main.mis_pedidos'))
 
-
 @pagos.route('/pago/exito')
-@login_required
 def pago_exito():
-    flash('Pago realizado correctamente. Tu pedido se actualizará en unos segundos.', 'success')
-    return redirect(url_for('main.mis_pedidos'))
 
+    flash('Pago realizado correctamente.', 'success')
+
+    if current_user.is_authenticated:
+        return redirect(url_for('main.mis_pedidos'))
+
+    return redirect(url_for('main.seguimiento_pedido'))
 
 @pagos.route('/pago/cancelado')
-@login_required
 def pago_cancelado():
-    flash('El pago ha sido cancelado. Puedes intentarlo de nuevo cuando quieras.', 'warning')
-    return redirect(url_for('main.mis_pedidos'))
+
+    flash('El pago ha sido cancelado.', 'warning')
+
+    if current_user.is_authenticated:
+        return redirect(url_for('main.mis_pedidos'))
+
+    return redirect(url_for('main.seguimiento_pedido'))
 
 
 @pagos.route('/stripe/webhook', methods=['POST'])
@@ -158,3 +164,71 @@ def stripe_webhook():
         Pedido.marcar_cancelado_por_session(stripe_session_id)
 
     return jsonify({'received': True}), 200
+
+
+
+
+@pagos.route('/pagar-invitado/<int:pedido_id>', methods=['POST'])
+def pagar_invitado(pedido_id):
+
+    if session.get('pedido_seguimiento') != pedido_id:
+        flash('Acceso no autorizado.', 'danger')
+        return redirect(url_for('main.seguimiento_pedido'))
+
+    stripe_secret_key = current_app.config.get("STRIPE_SECRET_KEY")
+    base_url = current_app.config.get("BASE_URL").rstrip("/")
+
+    if not stripe_secret_key:
+        flash('No se ha configurado correctamente Stripe.', 'danger')
+        return redirect(url_for('main.seguimiento_pedido'))
+
+    stripe.api_key = stripe_secret_key
+
+    pedido = Pedido.get_by_id(pedido_id)
+
+    if not pedido:
+        flash('El pedido no existe.', 'danger')
+        return redirect(url_for('main.seguimiento_pedido'))
+
+    if pedido.estado_pago == 'pagado':
+        flash('Este pedido ya está pagado.', 'warning')
+        return redirect(url_for('main.seguimiento_pedido'))
+
+    if pedido.estado_pedido != 'aceptado':
+        flash('Solo se pueden pagar pedidos aceptados.', 'warning')
+        return redirect(url_for('main.seguimiento_pedido'))
+
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            mode='payment',
+            customer_email=pedido.email_cliente,
+            line_items=[
+                {
+                    'price_data': {
+                        'currency': 'eur',
+                        'product_data': {
+                            'name': f'Reserva Valstrax Rail #{pedido.id}',
+                            'description': f'{pedido.origen} → {pedido.destino} | {pedido.espacios_solicitados} m²'
+                        },
+                        'unit_amount': int(float(pedido.precio_total) * 100),
+                    },
+                    'quantity': 1,
+                }
+            ],
+            metadata={
+                'pedido_id': str(pedido.id),
+                'codigo_seguimiento': pedido.codigo_seguimiento
+            },
+            success_url=f'{base_url}/pago/exito',
+            cancel_url=f'{base_url}/pago/cancelado'
+        )
+
+        Pedido.update_stripe_session(pedido.id, checkout_session.id)
+
+        return redirect(checkout_session.url, code=303)
+
+    except Exception as e:
+        print("Error Stripe invitado:", e)
+        flash('No se ha podido iniciar el pago.', 'danger')
+        return redirect(url_for('main.seguimiento_pedido'))

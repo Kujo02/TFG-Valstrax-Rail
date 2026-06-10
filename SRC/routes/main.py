@@ -247,8 +247,14 @@ def seguimiento_pedido():
 
         pedido = Pedido.get_by_codigo_email(codigo_seguimiento, email_cliente)
 
+        if pedido:
+            session['pedido_seguimiento'] = pedido.id
+
         if not pedido:
             flash('No se ha encontrado ningún pedido con esos datos.', 'danger')
             return render_template('seguimiento_pedido.html', pedido=None)
 
     return render_template('seguimiento_pedido.html', pedido=pedido)
+
+
+

@@ -74,13 +74,13 @@
 
                             <!-- Salida -->
                             <td class="px-6 py-4 text-gray-300 whitespace-nowrap">
-                                {{ viaje.fecha_salida }}
+                                {{ viaje.fecha_salida.strftime('%d/%m/%Y %H:%M:%S') }}
                             </td>
 
                             <!-- Llegada -->
                             <td class="px-6 py-4 text-gray-300 whitespace-nowrap">
                                 {% if viaje.fecha_llegada %}
-                                    {{ viaje.fecha_llegada }}
+                                    {{ viaje.fecha_llegada.strftime('%d/%m/%Y %H:%M:%S') }}
                                 {% else %}
                                     <span class="text-gray-500">Sin definir</span>
                                 {% endif %}

@@ -66,7 +66,7 @@
                                         Salida
                                     </p>
                                     <p class="text-gray-900 font-bold">
-                                        {{ pedido.fecha_salida }}
+                                        {{ pedido.fecha_salida.strftime('%d/%m/%Y %H:%M:%S') }}
                                     </p>
                                 </div>
 
@@ -76,7 +76,7 @@
                                     </p>
                                     <p class="text-gray-900 font-bold">
                                         {% if pedido.fecha_llegada %}
-                                            {{ pedido.fecha_llegada }}
+                                            {{ pedido.fecha_llegada.strftime('%d/%m/%Y %H:%M:%S') }}
                                         {% else %}
                                             Sin definir
                                         {% endif %}
@@ -212,7 +212,7 @@
                             <!-- Fecha -->
                             <div class="pt-3 border-t border-gray-200">
                                 <p class="text-gray-500 text-xs">
-                                    Creado el {{ pedido.created_at }}
+                                    Creado el {{ pedido.created_at.strftime('%d/%m/%Y %H:%M:%S') }}
                                 </p>
                             </div>
 
