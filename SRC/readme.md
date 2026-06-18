@@ -27,6 +27,9 @@ La plataforma permite a los usuarios consultar viajes disponibles, reservar espa
 - Integración de pagos en modo de prueba con Stripe
 - Páginas de error personalizadas
 
+## Demo
+ [Ver Valstrax Rail](https://valstrax-rail.optcgod.com)
+
 ## Instalación y ejecución
 
 ### 1. Clonar el repositorio
@@ -34,3 +37,4 @@ La plataforma permite a los usuarios consultar viajes disponibles, reservar espa
 ```bash
 git clone https://github.com/Kujo02/TFG-Valstrax-Rail.git
 cd TFG-Valstrax-Rail
+
